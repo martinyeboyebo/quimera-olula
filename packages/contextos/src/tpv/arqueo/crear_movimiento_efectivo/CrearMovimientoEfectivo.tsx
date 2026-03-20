@@ -21,7 +21,7 @@ export const CrearMovimientoEfectivo = ({
   publicar: EmitirEvento;
   arqueo: ArqueoTpv;
 }) => {
-  const miAgenteActivo = agenteActivo.obtenerSegudo();
+  const miAgenteActivo = agenteActivo.obtenerSeguro();
 
   const { modelo, uiProps, valido } = useModelo(
     metaMovimientoEfectivo,
@@ -35,6 +35,8 @@ export const CrearMovimientoEfectivo = ({
       idAgente: miAgenteActivo?.id ?? "",
     });
     publicar("movimiento_creado");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modelo, publicar]);
 
   const cancelar = useCallback(
