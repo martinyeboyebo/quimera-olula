@@ -1,23 +1,14 @@
 import { Icon } from "@mui/material";
 import { estaAutentificado } from "@olula/componentes/plantilla/autenticacion.ts";
 import "@olula/componentes/plantilla/Cabecera.css";
+import { CabeceraProps } from "@olula/componentes/plantilla/Cabecera.tsx";
 import { useMenuControl } from "@olula/componentes/plantilla/useMenuControl.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { useContext } from "react";
 import { Link } from "react-router";
 import "./Cabecera.scss";
 
-export const Cabecera = () => {
-  const { app } = useContext(FactoryCtx);
-  if (!app.Componentes?.Cabecera) {
-    return null;
-  }
-  const Cabecera_ = app.Componentes.Cabecera as typeof CabeceraGan;
-
-  return Cabecera_();
-};
-
-export const CabeceraGan = () => {
+export const CabeceraGan = (_props?: CabeceraProps) => {
   const { app } = useContext(FactoryCtx);
   const { toggleMenu } = useMenuControl();
   const AccionesCabecera = app.Componentes

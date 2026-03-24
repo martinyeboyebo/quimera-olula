@@ -1,6 +1,7 @@
 import "@olula/componentes/menu/menu-usuario.css";
 
 import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
+import { MenuUsuarioProps } from "@olula/componentes/menu/menu-usuario.tsx";
 import {
   ElementoMenu,
   ElementoMenuPadre,
@@ -8,8 +9,6 @@ import {
 import { estaAutentificado } from "@olula/componentes/plantilla/autenticacion.ts";
 import { useMenuControl } from "@olula/componentes/plantilla/useMenuControl.ts";
 import { puede } from "@olula/lib/dominio.ts";
-import { FactoryCtx } from "@olula/lib/factory_ctx.js";
-import { useContext } from "react";
 import { Link } from "react-router";
 import "./MenuUsuario.scss";
 
@@ -57,17 +56,7 @@ const elementosDelMenu = [
   },
 ];
 
-export const MenuUsuario = () => {
-  const { app } = useContext(FactoryCtx);
-  if (!app.Componentes?.MenuUsuario) {
-    return null;
-  }
-  const MenuUsuario_ = app.Componentes.MenuUsuario as typeof MenuUsuarioGan;
-
-  return MenuUsuario_();
-};
-
-export const MenuUsuarioGan = () => {
+export const MenuUsuarioGan = (_props?: MenuUsuarioProps) => {
   const { menuAbierto, cerrarMenu } = useMenuControl();
 
   // No mostrar menú si no está autenticado

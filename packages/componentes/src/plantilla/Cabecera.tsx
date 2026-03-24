@@ -6,17 +6,9 @@ import "./Cabecera.css";
 import { estaAutentificado } from "./autenticacion";
 import { useMenuControl } from "./useMenuControl";
 
-export const Cabecera = () => {
-  const { app } = useContext(FactoryCtx);
-  if (!app.Componentes?.Cabecera) {
-    return null;
-  }
-  const Cabecera_ = app.Componentes.Cabecera as typeof CabeceraBase;
+export type CabeceraProps = Record<string, never>;
 
-  return Cabecera_();
-};
-
-export const CabeceraBase = () => {
+export const CabeceraBase = (_props?: CabeceraProps) => {
   const { app } = useContext(FactoryCtx);
   const { toggleMenu } = useMenuControl();
   const AccionesCabecera = app.Componentes
@@ -57,4 +49,14 @@ export const CabeceraBase = () => {
       </header>
     </>
   );
+};
+
+export const Cabecera = (props?: CabeceraProps) => {
+  const { app } = useContext(FactoryCtx);
+  if (!app.Componentes?.Cabecera) {
+    return null;
+  }
+  const Cabecera_ = app.Componentes.Cabecera as typeof CabeceraBase;
+
+  return Cabecera_(props);
 };

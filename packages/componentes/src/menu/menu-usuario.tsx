@@ -32,17 +32,9 @@ const elementosDelMenu = [
   },
 ];
 
-export const MenuUsuario = () => {
-  const { app } = useContext(FactoryCtx);
-  if (!app.Componentes?.MenuUsuario) {
-    return null;
-  }
-  const MenuUsuario_ = app.Componentes.MenuUsuario as typeof MenuUsuarioBase;
+export type MenuUsuarioProps = Record<string, never>;
 
-  return MenuUsuario_();
-};
-
-export const MenuUsuarioBase = () => {
+export const MenuUsuarioBase = (_props?: MenuUsuarioProps) => {
   const { menuAbierto, cerrarMenu } = useMenuControl();
 
   // No mostrar menú si no está autenticado
@@ -98,4 +90,14 @@ export const MenuUsuarioBase = () => {
       </aside>
     </menu-usuario>
   );
+};
+
+export const MenuUsuario = (props?: MenuUsuarioProps) => {
+  const { app } = useContext(FactoryCtx);
+  if (!app.Componentes?.MenuUsuario) {
+    return null;
+  }
+  const MenuUsuario_ = app.Componentes.MenuUsuario as typeof MenuUsuarioBase;
+
+  return MenuUsuario_(props);
 };
