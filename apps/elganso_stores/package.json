@@ -17,6 +17,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@mui/material": "^6.1.10",
         "@olula/componentes": "workspace:*",
         "@olula/ctx": "workspace:*",
         "@olula/lib": "workspace:*",

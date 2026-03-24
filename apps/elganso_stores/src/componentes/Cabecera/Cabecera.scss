@@ -1,0 +1,19 @@
+header {
+    height: 60px;
+
+    a {        
+        &.logoGanso {
+            height: 25px;
+            margin-left: 20px;
+
+            img {
+                filter: brightness(0) invert(1);
+                height: 20px;
+            }
+        }
+    }
+
+    #etiqueta-menu-usuario-abierto {
+        cursor: pointer;
+    }
+}

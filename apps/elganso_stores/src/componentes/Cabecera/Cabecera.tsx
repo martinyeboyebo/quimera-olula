@@ -1,22 +1,23 @@
+import { Icon } from "@mui/material";
+import { estaAutentificado } from "@olula/componentes/plantilla/autenticacion.ts";
+import "@olula/componentes/plantilla/Cabecera.css";
+import { useMenuControl } from "@olula/componentes/plantilla/useMenuControl.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.tsx";
 import { useContext } from "react";
 import { Link } from "react-router";
-import { QIcono } from "../atomos/qicono.tsx";
-import "./Cabecera.css";
-import { estaAutentificado } from "./autenticacion";
-import { useMenuControl } from "./useMenuControl";
+import "./Cabecera.scss";
 
 export const Cabecera = () => {
   const { app } = useContext(FactoryCtx);
   if (!app.Componentes?.Cabecera) {
     return null;
   }
-  const Cabecera_ = app.Componentes.Cabecera as typeof CabeceraBase;
+  const Cabecera_ = app.Componentes.Cabecera as typeof CabeceraGan;
 
   return Cabecera_();
 };
 
-export const CabeceraBase = () => {
+export const CabeceraGan = () => {
   const { app } = useContext(FactoryCtx);
   const { toggleMenu } = useMenuControl();
   const AccionesCabecera = app.Componentes
@@ -31,10 +32,9 @@ export const CabeceraBase = () => {
           aria-label="Abrir menú lateral"
           onClick={() => toggleMenu("lateral")}
         ></button>
-
         <label htmlFor="boton-menu-lateral" id="etiqueta-menu-abierto" />
-        <Link to="/">
-          <img src="/olula_header_blanco.png" alt="Olula | Inicio" />
+        <Link to="/" className="logoGanso">
+          <img src="/logo_ganso.png" alt="ElGanso | Inicio" />
         </Link>
         <div id="cabecera-acciones-extra">
           {AccionesCabecera ? <AccionesCabecera /> : null}
@@ -50,7 +50,7 @@ export const CabeceraBase = () => {
               htmlFor="boton-menu-usuario"
               id="etiqueta-menu-usuario-abierto"
             >
-              <QIcono nombre="perfil" tamaño="sm" />
+              <Icon fontSize="large">account_circle</Icon>
             </label>
           </>
         )}

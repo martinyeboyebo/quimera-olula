@@ -2,6 +2,7 @@ import { crearRouterLegacy, Dependency } from "@olula/lib/router_legacy.ts";
 import Quimera from "quimera";
 import project from "../../../legacy/apps/elganso-stores/src/project.ts";
 import "../../../legacy/apps/elganso-stores/styles.css";
+import "../../../legacy/apps/elganso-stores/styles/_variables.scss";
 
 const environment = {
   production: import.meta.env.MODE !== "development",

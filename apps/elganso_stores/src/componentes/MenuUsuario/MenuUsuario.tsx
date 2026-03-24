@@ -1,23 +1,47 @@
-import "./menu-usuario.css";
+import "@olula/componentes/menu/menu-usuario.css";
 
+import { QIcono } from "@olula/componentes/atomos/qicono.tsx";
+import {
+  ElementoMenu,
+  ElementoMenuPadre,
+} from "@olula/componentes/menu/menu.ts";
+import { estaAutentificado } from "@olula/componentes/plantilla/autenticacion.ts";
+import { useMenuControl } from "@olula/componentes/plantilla/useMenuControl.ts";
 import { puede } from "@olula/lib/dominio.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { useContext } from "react";
 import { Link } from "react-router";
-import { QIcono } from "../atomos/qicono.tsx";
-import { estaAutentificado } from "../plantilla/autenticacion";
-import { useMenuControl } from "../plantilla/useMenuControl";
-import { ElementoMenu, ElementoMenuPadre } from "./menu.ts";
+import "./MenuUsuario.scss";
+
+const userData = JSON.parse(localStorage.getItem("user_data") || "{}");
+const nombreUsuario = userData?.user?.user || "Usuario";
 
 const elementosDelMenu = [
   {
-    nombre: "Usuarios",
-
+    nombre: "Usuario",
     subelementos: [
+      {
+        nombre: nombreUsuario,
+        url: "#",
+        regla: "contexto.recibo_venta",
+        icono: "usuario_relleno",
+      },
+    ],
+  },
+  {
+    nombre: "Administración",
+    subelementos: [
+      {
+        nombre: "Usuarios",
+        url: "/auth/usuario",
+        regla: "contexto.recibo_venta",
+        icono: "grupo_relleno",
+      },
       {
         nombre: "Grupos",
         url: "/auth/grupo",
         regla: "contexto.recibo_venta",
+        icono: "grupo_relleno",
       },
     ],
   },
@@ -27,6 +51,7 @@ const elementosDelMenu = [
       {
         nombre: "Cerrar sesión",
         url: "/logout",
+        icono: "cerrar_sesion",
       },
     ],
   },
@@ -37,12 +62,12 @@ export const MenuUsuario = () => {
   if (!app.Componentes?.MenuUsuario) {
     return null;
   }
-  const MenuUsuario_ = app.Componentes.MenuUsuario as typeof MenuUsuarioBase;
+  const MenuUsuario_ = app.Componentes.MenuUsuario as typeof MenuUsuarioGan;
 
   return MenuUsuario_();
 };
 
-export const MenuUsuarioBase = () => {
+export const MenuUsuarioGan = () => {
   const { menuAbierto, cerrarMenu } = useMenuControl();
 
   // No mostrar menú si no está autenticado

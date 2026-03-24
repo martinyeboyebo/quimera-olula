@@ -3,11 +3,12 @@ import { FactoryAuthOlula } from '#/auth/factory.ts';
 import { FactoryCrmOlula } from '#/crm/factory.ts';
 import { FactoryTpvOlula } from '#/tpv/factory.ts';
 import { FactoryVentasOlula } from '#/ventas/factory.ts';
-
+import { FactoryComponentesOlula } from '@olula/componentes/factory.ts';
 
 
 export class FactoryOlula {
     Inicio = { menu: { "Inicio": { url: "/", icono: "inicio" } } };
+    Componentes = FactoryComponentesOlula;
     Almacen = FactoryAlmacenOlula;
     Crm = FactoryCrmOlula;
     Ventas = FactoryVentasOlula;

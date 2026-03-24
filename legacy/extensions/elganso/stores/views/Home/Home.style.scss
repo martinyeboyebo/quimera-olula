@@ -10,10 +10,8 @@
     .buttonHome {
       border: 1px solid $primary-color;
       border-radius: 5px;
-
-      .MuiIconButton-label {
-        display: grid;
-      }
+      padding: 12px;
+      display: grid;
 
       .iconButton {
         font-size: 35px;

@@ -3,6 +3,11 @@
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     color-scheme: light;
+
+    --color-fondo-header: #072146;
+    --color-texto-primario: #072146;
+    /* --color-deshabilitado: #072146; */
+    --color-texto: white;
 }
 
 #root {
@@ -12,4 +17,16 @@
     scroll-behavior: smooth;
     scrollbar-width: auto;
     scrollbar-color: #bdbdbd #e0e0e0;
+}
+
+#HeaderContainer {
+    display: none;
+}
+
+#root section[role=main] .MuiBox-root:not(menu-lateral):not(menu-usuario) {
+    padding: 0;
+}
+
+h2 {
+    margin: 0.83rem 0;
 }
