@@ -1,13 +1,50 @@
+import { styled } from '@mui/material/styles';
 import "./Inventarios.style.scss";
 
-import { DataGrid, GridToolbarContainer, GridToolbarQuickFilter } from "@mui/x-data-grid";
+import CancelIcon from '@mui/icons-material/Cancel';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
+import {
+  DataGrid,
+  QuickFilter,
+  QuickFilterClear,
+  QuickFilterControl,
+  QuickFilterTrigger,
+  Toolbar,
+  ToolbarButton,
+} from "@mui/x-data-grid";
 import { Icon, IconButton } from "@quimera/comps";
 import { navigate } from "hookrouter";
 import Quimera, { PropValidation, useStateValue, useWidth } from "quimera";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDbState } from "use-db-state";
-
 import { LoadingGif, YearInCurso } from "../../comps";
+
+const StyledQuickFilter = styled(QuickFilter)({
+  display: 'grid',
+  alignItems: 'center',
+  marginLeft: 'auto',
+});
+
+const StyledToolbarButton = styled(ToolbarButton)(({ theme, ownerState }) => ({
+  gridArea: '1 / 1',
+  width: 'min-content',
+  height: 'min-content',
+  zIndex: 1,
+  opacity: ownerState.expanded ? 0 : 1,
+  pointerEvents: ownerState.expanded ? 'none' : 'auto',
+  transition: theme.transitions.create(['opacity']),
+}));
+
+const StyledTextField = styled(TextField)(({ theme, ownerState }) => ({
+  gridArea: '1 / 1',
+  overflowX: 'clip',
+  width: ownerState.expanded ? 260 : 'var(--trigger-width)',
+  opacity: ownerState.expanded ? 1 : 0,
+  transition: theme.transitions.create(['width', 'opacity']),
+}));
 
 const getDbInstance = (dbName, storeName) => {
   return new Promise((resolve, reject) => {
@@ -235,10 +272,61 @@ function Inventarios() {
 
     function CustomToolbar() {
       return (
-        <GridToolbarContainer className="toolbarContainer">
+        <Toolbar className="toolbarContainer">
           <YearInCurso className="toolbarContainer-quickFilter" />
           <div className="toolbarContainer-subcontainer">
-            <GridToolbarQuickFilter className="toolbarContainer-quickFilter" />
+            <StyledQuickFilter>
+              <QuickFilterTrigger
+                render={(triggerProps, state) => (
+                  <Tooltip title="Buscar" enterDelay={0}>
+                    <StyledToolbarButton
+                      {...triggerProps}
+                      ownerState={{ expanded: state.expanded }}
+                      color="default"
+                      aria-disabled={state.expanded}
+                    >
+                      <SearchIcon fontSize="small" />
+                    </StyledToolbarButton>
+                  </Tooltip>
+                )}
+              />
+              <QuickFilterControl
+                className="quickFilter"
+                render={({ ref, ...controlProps }, state) => (
+                  <StyledTextField
+                    {...controlProps}
+                    ownerState={{ expanded: state.expanded }}
+                    inputRef={ref}
+                    aria-label="Buscar"
+                    placeholder="Buscar..."
+                    size="small"
+                    slotProps={{
+                      input: {
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <SearchIcon fontSize="small" />
+                          </InputAdornment>
+                        ),
+                        endAdornment: state.value ? (
+                          <InputAdornment position="end">
+                            <QuickFilterClear
+                              edge="end"
+                              size="small"
+                              aria-label="Limpiar"
+                              material={{ sx: { marginRight: -0.75 } }}
+                            >
+                              <CancelIcon fontSize="small" />
+                            </QuickFilterClear>
+                          </InputAdornment>
+                        ) : null,
+                        ...controlProps.slotProps?.input,
+                      },
+                      ...controlProps.slotProps,
+                    }}
+                  />
+                )}
+              />
+            </StyledQuickFilter>
             <IconButton
               id="button-download"
               className="buttonDescargar buttonDescargar-green"
@@ -256,7 +344,7 @@ function Inventarios() {
               <Icon>sync</Icon>
             </IconButton>
           </div>
-        </GridToolbarContainer>
+        </Toolbar>
       );
     }
 
@@ -352,6 +440,7 @@ function Inventarios() {
                 labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
               },
             }}
+            showToolbar
           />
         ) : (
           <LoadingGif />
