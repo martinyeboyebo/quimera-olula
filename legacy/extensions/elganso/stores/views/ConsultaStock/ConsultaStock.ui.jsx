@@ -93,13 +93,18 @@ function ConsultaStock({ useStyles }) {
     return (
       <Accordion
         className="Accordion-Tienda"
-        expanded={filaSeleccionada === params.id ? true : false}
+        expanded={filaSeleccionada === params.id}
+        onChange={(e, isExpanded) => {
+          e.stopPropagation();
+          setFilaSeleccionada(isExpanded ? params.id : null);
+        }}
       >
         <AccordionSummary
           expandIcon={<Icon>arrow_drop_down</Icon>}
           aria-controls="panel1-content"
           id="panel1-header"
           className="cabeceraAccordion"
+          onClick={e => e.stopPropagation()}
         >
           <span>
             <b>{params.row.tienda.titulo}</b>
@@ -123,13 +128,13 @@ function ConsultaStock({ useStyles }) {
       for (const key in element) {
         rows.push(
           <div>
-            {key}: {element[key]}
+            <strong>{key}</strong>: {element[key]}
           </div>,
         );
       }
     });
 
-    return <div>{rows}</div>;
+    return <div className="disponibilidadStockContainer">{rows}</div>;
   };
 
   const columns = [
@@ -197,9 +202,7 @@ function ConsultaStock({ useStyles }) {
         disableColumnSelector
         disableDensitySelector
         disableColumnMenu
-        onRowSelectionModelChange={e => {
-          filaSeleccionada === e[0] ? setFilaSeleccionada(null) : setFilaSeleccionada(e[0]);
-        }}
+
         columns={columns}
         getRowId={row => row.index}
         getRowClassName={() => "rowTienda"}
@@ -218,6 +221,7 @@ function ConsultaStock({ useStyles }) {
             labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
           },
         }}
+        showToolbar
       />
     );
   };

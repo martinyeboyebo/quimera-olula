@@ -68,6 +68,11 @@ body .MuiGrid-grid-xs-6 {
     flex-basis: 50%;
 }
 
+body .MuiDataGrid-row {
+    display: flex;
+    align-items: stretch;
+}
+
 #NewInventario .MuiTextField-root {
     width: 100%;
 }
