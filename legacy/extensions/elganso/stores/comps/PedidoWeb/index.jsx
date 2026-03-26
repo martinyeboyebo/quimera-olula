@@ -33,6 +33,11 @@ function PedidoWeb({ _estilos, ...props }) {
   const [msgBarcodeClass, setMsgBarcodeClass] = React.useState();
   const [msgBarcode, setMsgBarcode] = React.useState("Haga click para escanear");
   const [scannerValue, setScannerValue] = React.useState();
+  const [localExpanded, setLocalExpanded] = React.useState(props.expanded);
+
+  React.useEffect(() => {
+    setLocalExpanded(props.expanded);
+  }, [props.expanded]);
 
   const renderCabecera = params => {
     const { row } = params;
@@ -169,9 +174,6 @@ function PedidoWeb({ _estilos, ...props }) {
     }
 
     let activeMarcarFaltante = false;
-    if (rowFaltanteSelectionModel && rowFaltanteSelectionModel.length > 0) {
-      activeMarcarFaltante = true;
-    }
 
     const columns = [
       {
@@ -343,12 +345,8 @@ function PedidoWeb({ _estilos, ...props }) {
             disableDensitySelector
             disableColumnMenu
             disableRowSelectionOnClick
-            checkboxSelection={true}
+            checkboxSelection={false}
             hideFooter={true}
-            onRowSelectionModelChange={newRowFaltanteSelectionModel => {
-              setFaltanteSelectionModel(newRowFaltanteSelectionModel);
-            }}
-            rowSelectionModel={rowFaltanteSelectionModel}
             columns={columns}
             slots={{ toolbar: null }}
             getRowId={row => row.id}
@@ -383,11 +381,7 @@ function PedidoWeb({ _estilos, ...props }) {
                 showQuickFilter: true,
                 printOptions: { disableToolbarButton: true },
                 csvOptions: { disableToolbarButton: true },
-              },
-              pagination: {
-                labelRowsPerPage: "Líneas por página",
-                labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-              },
+              }
             }}
           />
         ) : (
@@ -450,7 +444,13 @@ function PedidoWeb({ _estilos, ...props }) {
 
   return (
     <div className="pedidoWebWrapper">
-      <Accordion expanded={expanded}>
+      <Accordion
+        expanded={localExpanded}
+        onChange={(e, isExpanded) => {
+          setLocalExpanded(isExpanded);
+          e.stopPropagation();
+        }}
+      >
         <AccordionSummary
           expandIcon={<Icon>arrow_drop_down</Icon>}
           aria-controls="panel1-content"

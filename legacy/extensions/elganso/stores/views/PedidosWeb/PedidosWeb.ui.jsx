@@ -224,10 +224,13 @@ function PedidosWeb({ useStyles }) {
     const { idtpv_comanda } = params.row;
     const { abrirDialogoFaltante } = state;
 
+    // const expanded = rowSelectionModel.includes(idtpv_comanda.toString()) ? true : false;
+
+
     return (
       <PedidoWeb
         pedido={params}
-        expanded={rowSelectionModel.includes(idtpv_comanda) ? true : false}
+        expanded={rowSelectionModel.includes(idtpv_comanda.toString()) ? true : false}
         setFiltroSeleccionado={setFiltroSeleccionado}
         abrirDialogoFaltante={abrirDialogoFaltante}
       />
@@ -443,59 +446,54 @@ function PedidosWeb({ useStyles }) {
       faltantesRegularizar,
     } = state;
 
-    console.log('lineasAgrupadasPorPedido');
-    console.log(lineasAgrupadasPorPedido);
-    console.log('pedidosProcesados');
-    console.log(pedidosProcesados(lineasAgrupadasPorPedido));
-    console.log('rowSelectionModel');
-    console.log(rowSelectionModel);
-
     return (
       <div id="PedidosWeb" className="page-container">
         <h2 className="main">Gestión Pedidos</h2>
         {/* <BarcodeScanner /> */}
-        {lineasAgrupadasPorPedido.length > 0 ? (
-          <DataGrid
-            rows={pedidosProcesados(lineasAgrupadasPorPedido)}
-            disableAutosize
-            disableColumnFilter
-            disableColumnSelector
-            disableDensitySelector
-            disableColumnMenu
-            disableRowSelectionOnClick
-            checkboxSelection
-            onRowSelectionModelChange={newRowSelectionModel => {
+        <DataGrid
+          rows={pedidosProcesados(lineasAgrupadasPorPedido)}
+          disableAutosize
+          disableColumnFilter
+          disableColumnSelector
+          disableDensitySelector
+          disableColumnMenu
+          disableRowSelectionOnClick
+          checkboxSelection
+          onRowSelectionModelChange={(newRowSelectionModel, details) => {
+            if (Array.isArray(newRowSelectionModel)) {
               setRowSelectionModel(newRowSelectionModel);
-            }}
-            rowSelectionModel={rowSelectionModel}
-            columns={columns}
-            slots={{ toolbar: CustomToolbar }}
-            localeText={{
-              toolbarQuickFilterPlaceholder: "Buscar...",
-              paginationRowsPerPage: "Líneas por página",
-            }}
-            getRowId={row => row.idtpv_comanda}
-            getRowClassName={params => {
-              return "rowPedido";
-            }}
-            getRowHeight={() => "auto"}
-            sx={{
-              ".MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-            }}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                printOptions: { disableToolbarButton: true },
-                csvOptions: { disableToolbarButton: true },
+            } else {
+              if (newRowSelectionModel && typeof newRowSelectionModel === 'object' && 'ids' in newRowSelectionModel) {
+                const selectedProjectIds = Array.from(newRowSelectionModel.ids || []).map(id => String(id));
+                setRowSelectionModel(selectedProjectIds);
+              } else {
+                setRowSelectionModel([]);
               }
-            }}
-            showToolbar
-          />
-        ) : (
-          <div className="text-actualizar">
-            No se encuentran pedidos web pendientes de gestionar.
-          </div>
-        )}
+            }
+          }}
+          columns={columns}
+          slots={{ toolbar: CustomToolbar }}
+          localeText={{
+            toolbarQuickFilterPlaceholder: "Buscar...",
+            paginationRowsPerPage: "Líneas por página",
+          }}
+          getRowId={row => row.idtpv_comanda}
+          getRowClassName={params => {
+            return "rowPedido";
+          }}
+          getRowHeight={() => "auto"}
+          sx={{
+            ".MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+          }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              printOptions: { disableToolbarButton: true },
+              csvOptions: { disableToolbarButton: true },
+            }
+          }}
+          showToolbar
+        />
 
         <Container>
           <Dialog open={abrirDialogoFaltante} fullWidth maxWidth="md">
