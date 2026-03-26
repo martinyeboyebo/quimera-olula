@@ -7,13 +7,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import {
-  DataGrid,
-  QuickFilter,
-  QuickFilterClear,
-  QuickFilterControl,
-  QuickFilterTrigger,
-  Toolbar,
-  ToolbarButton,
+  DataGrid, QuickFilter, QuickFilterClear, QuickFilterControl, QuickFilterTrigger, Toolbar, ToolbarButton
 } from "@mui/x-data-grid";
 import { Icon, IconButton } from "@quimera/comps";
 import { navigate } from "hookrouter";
@@ -427,6 +421,7 @@ function Inventarios() {
             slots={{ toolbar: CustomToolbar }}
             localeText={{
               toolbarQuickFilterPlaceholder: "Buscar...",
+              paginationRowsPerPage: "Líneas por página",
             }}
             getRowId={row => row.idinventario}
             slotProps={{
@@ -434,11 +429,7 @@ function Inventarios() {
                 showQuickFilter: true,
                 printOptions: { disableToolbarButton: true },
                 csvOptions: { disableToolbarButton: true },
-              },
-              pagination: {
-                labelRowsPerPage: "Líneas por página",
-                labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-              },
+              }
             }}
             showToolbar
           />

@@ -56,6 +56,10 @@ body .MuiButton-colorSecondary {
     font-weight: bold;
 }
 
+body .controlHorario .MuiButton-colorPrimary {
+    color: black;
+}
+
 body .MuiGrid-root {
     width: 100%;
     margin-left: 0;

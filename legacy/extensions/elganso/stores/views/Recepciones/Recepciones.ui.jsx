@@ -430,6 +430,7 @@ function Recepciones() {
           slots={{ toolbar: CustomToolbar }}
           localeText={{
             toolbarQuickFilterPlaceholder: "Buscar...",
+            paginationRowsPerPage: "Líneas por página",
           }}
           getRowId={row => row.idviajemultitrans}
           slotProps={{
@@ -437,11 +438,7 @@ function Recepciones() {
               showQuickFilter: true,
               printOptions: { disableToolbarButton: true },
               csvOptions: { disableToolbarButton: true },
-            },
-            pagination: {
-              labelRowsPerPage: "Líneas por página",
-              labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-            },
+            }
           }}
           showToolbar
         />

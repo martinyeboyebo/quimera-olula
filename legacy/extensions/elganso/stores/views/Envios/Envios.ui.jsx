@@ -427,6 +427,7 @@ function Envios() {
           slots={{ toolbar: CustomToolbar }}
           localeText={{
             toolbarQuickFilterPlaceholder: "Buscar...",
+            paginationRowsPerPage: "Líneas por página",
           }}
           getRowId={row => row.idviajemultitrans}
           slotProps={{
@@ -434,11 +435,7 @@ function Envios() {
               showQuickFilter: true,
               printOptions: { disableToolbarButton: true },
               csvOptions: { disableToolbarButton: true },
-            },
-            pagination: {
-              labelRowsPerPage: "Líneas por página",
-              labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-            },
+            }
           }}
           showToolbar
         />

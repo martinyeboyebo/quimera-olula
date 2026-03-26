@@ -1,8 +1,15 @@
-/* eslint-disable prettier/prettier */
+import { styled } from '@mui/material/styles';
 import "./PedidosWeb.style.scss";
 
+import CancelIcon from '@mui/icons-material/Cancel';
+import SearchIcon from '@mui/icons-material/Search';
+import InputAdornment from '@mui/material/InputAdornment';
 import Switch from "@mui/material/Switch";
-import { DataGrid, GridToolbarContainer, GridToolbarQuickFilter } from "@mui/x-data-grid";
+import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
+import {
+  DataGrid, QuickFilter, QuickFilterClear, QuickFilterControl, QuickFilterTrigger, Toolbar, ToolbarButton
+} from "@mui/x-data-grid";
 import { Button, Container, Dialog, DialogActions, DialogTitle } from "@quimera/comps";
 import Quimera, { PropValidation, useStateValue, util } from "quimera";
 import React, { useEffect } from "react";
@@ -10,6 +17,30 @@ import Select from "react-select";
 
 // import { BarcodeScanner } from "../../comps";
 import { PedidoWeb } from "../../comps";
+
+const StyledQuickFilter = styled(QuickFilter)({
+  display: 'grid',
+  alignItems: 'center',
+  marginLeft: 'auto',
+});
+
+const StyledToolbarButton = styled(ToolbarButton)(({ theme, ownerState }) => ({
+  gridArea: '1 / 1',
+  width: 'min-content',
+  height: 'min-content',
+  zIndex: 1,
+  opacity: ownerState.expanded ? 0 : 1,
+  pointerEvents: ownerState.expanded ? 'none' : 'auto',
+  transition: theme.transitions.create(['opacity']),
+}));
+
+const StyledTextField = styled(TextField)(({ theme, ownerState }) => ({
+  gridArea: '1 / 1',
+  overflowX: 'clip',
+  width: ownerState.expanded ? 260 : 'var(--trigger-width)',
+  opacity: ownerState.expanded ? 1 : 0,
+  transition: theme.transitions.create(['width', 'opacity']),
+}));
 
 function PedidosWeb({ useStyles }) {
   const [state, dispatch] = useStateValue();
@@ -285,9 +316,60 @@ function PedidosWeb({ useStyles }) {
     }
 
     return (
-      <GridToolbarContainer className="toolbarContainer">
+      <Toolbar className="toolbarContainer">
         <div className="toolbarContainer-subcontainer">
-          <GridToolbarQuickFilter className="toolbarContainer-quickFilter" />
+          <StyledQuickFilter>
+            <QuickFilterTrigger
+              render={(triggerProps, state) => (
+                <Tooltip title="Buscar" enterDelay={0}>
+                  <StyledToolbarButton
+                    {...triggerProps}
+                    ownerState={{ expanded: state.expanded }}
+                    color="default"
+                    aria-disabled={state.expanded}
+                  >
+                    <SearchIcon fontSize="small" />
+                  </StyledToolbarButton>
+                </Tooltip>
+              )}
+            />
+            <QuickFilterControl
+              className="quickFilter"
+              render={({ ref, ...controlProps }, state) => (
+                <StyledTextField
+                  {...controlProps}
+                  ownerState={{ expanded: state.expanded }}
+                  inputRef={ref}
+                  aria-label="Buscar"
+                  placeholder="Buscar..."
+                  size="small"
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon fontSize="small" />
+                        </InputAdornment>
+                      ),
+                      endAdornment: state.value ? (
+                        <InputAdornment position="end">
+                          <QuickFilterClear
+                            edge="end"
+                            size="small"
+                            aria-label="Limpiar"
+                            material={{ sx: { marginRight: -0.75 } }}
+                          >
+                            <CancelIcon fontSize="small" />
+                          </QuickFilterClear>
+                        </InputAdornment>
+                      ) : null,
+                      ...controlProps.slotProps?.input,
+                    },
+                    ...controlProps.slotProps,
+                  }}
+                />
+              )}
+            />
+          </StyledQuickFilter>
           <div className="row-Filtros">
             <Select
               defaultValue={valueFromId(colorsArray, filtroSeleccionado)}
@@ -337,7 +419,7 @@ function PedidosWeb({ useStyles }) {
             }
           }}
         />
-      </GridToolbarContainer>
+      </Toolbar>
     );
   };
 
@@ -361,47 +443,59 @@ function PedidosWeb({ useStyles }) {
       faltantesRegularizar,
     } = state;
 
+    console.log('lineasAgrupadasPorPedido');
+    console.log(lineasAgrupadasPorPedido);
+    console.log('pedidosProcesados');
+    console.log(pedidosProcesados(lineasAgrupadasPorPedido));
+    console.log('rowSelectionModel');
+    console.log(rowSelectionModel);
+
     return (
-      <>
+      <div id="PedidosWeb" className="page-container">
+        <h2 className="main">Gestión Pedidos</h2>
         {/* <BarcodeScanner /> */}
-        <DataGrid
-          rows={pedidosProcesados(lineasAgrupadasPorPedido)}
-          disableAutosize
-          disableColumnFilter
-          disableColumnSelector
-          disableDensitySelector
-          disableColumnMenu
-          disableRowSelectionOnClick
-          checkboxSelection
-          onRowSelectionModelChange={newRowSelectionModel => {
-            setRowSelectionModel(newRowSelectionModel);
-          }}
-          rowSelectionModel={rowSelectionModel}
-          columns={columns}
-          slots={{ toolbar: CustomToolbar }}
-          localeText={{
-            toolbarQuickFilterPlaceholder: "Buscar...",
-          }}
-          getRowId={row => row.idtpv_comanda}
-          getRowClassName={params => {
-            return "rowPedido";
-          }}
-          getRowHeight={() => "auto"}
-          sx={{
-            ".MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
-          }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-              printOptions: { disableToolbarButton: true },
-              csvOptions: { disableToolbarButton: true },
-            },
-            pagination: {
-              labelRowsPerPage: "Líneas por página",
-              labelDisplayedRows: ({ from, to, count }) => `${from}-${to} de ${count}`,
-            },
-          }}
-        />
+        {lineasAgrupadasPorPedido.length > 0 ? (
+          <DataGrid
+            rows={pedidosProcesados(lineasAgrupadasPorPedido)}
+            disableAutosize
+            disableColumnFilter
+            disableColumnSelector
+            disableDensitySelector
+            disableColumnMenu
+            disableRowSelectionOnClick
+            checkboxSelection
+            onRowSelectionModelChange={newRowSelectionModel => {
+              setRowSelectionModel(newRowSelectionModel);
+            }}
+            rowSelectionModel={rowSelectionModel}
+            columns={columns}
+            slots={{ toolbar: CustomToolbar }}
+            localeText={{
+              toolbarQuickFilterPlaceholder: "Buscar...",
+              paginationRowsPerPage: "Líneas por página",
+            }}
+            getRowId={row => row.idtpv_comanda}
+            getRowClassName={params => {
+              return "rowPedido";
+            }}
+            getRowHeight={() => "auto"}
+            sx={{
+              ".MuiDataGrid-virtualScroller::-webkit-scrollbar": { display: "none" },
+            }}
+            slotProps={{
+              toolbar: {
+                showQuickFilter: true,
+                printOptions: { disableToolbarButton: true },
+                csvOptions: { disableToolbarButton: true },
+              }
+            }}
+            showToolbar
+          />
+        ) : (
+          <div className="text-actualizar">
+            No se encuentran pedidos web pendientes de gestionar.
+          </div>
+        )}
 
         <Container>
           <Dialog open={abrirDialogoFaltante} fullWidth maxWidth="md">
@@ -580,7 +674,7 @@ function PedidosWeb({ useStyles }) {
             </div>
           </>
         ) : null}
-      </>
+      </div>
     );
   };
 
