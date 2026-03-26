@@ -224,9 +224,6 @@ function PedidosWeb({ useStyles }) {
     const { idtpv_comanda } = params.row;
     const { abrirDialogoFaltante } = state;
 
-    // const expanded = rowSelectionModel.includes(idtpv_comanda.toString()) ? true : false;
-
-
     return (
       <PedidoWeb
         pedido={params}
@@ -446,30 +443,36 @@ function PedidosWeb({ useStyles }) {
       faltantesRegularizar,
     } = state;
 
+    const pedidos = pedidosProcesados(lineasAgrupadasPorPedido);
+
     return (
       <div id="PedidosWeb" className="page-container">
         <h2 className="main">Gestión Pedidos</h2>
         {/* <BarcodeScanner /> */}
         <DataGrid
-          rows={pedidosProcesados(lineasAgrupadasPorPedido)}
+          rows={pedidos}
           disableAutosize
           disableColumnFilter
           disableColumnSelector
           disableDensitySelector
           disableColumnMenu
-          disableRowSelectionOnClick
           checkboxSelection
           onRowSelectionModelChange={(newRowSelectionModel, details) => {
-            if (Array.isArray(newRowSelectionModel)) {
-              setRowSelectionModel(newRowSelectionModel);
-            } else {
-              if (newRowSelectionModel && typeof newRowSelectionModel === 'object' && 'ids' in newRowSelectionModel) {
+            if (newRowSelectionModel && typeof newRowSelectionModel === 'object' && 'ids' in newRowSelectionModel) {
+              if (newRowSelectionModel.type == 'include') {
                 const selectedProjectIds = Array.from(newRowSelectionModel.ids || []).map(id => String(id));
                 setRowSelectionModel(selectedProjectIds);
-              } else {
-                setRowSelectionModel([]);
               }
+
+              // Si hacemos click en 'Select All' y es de tipo exclude marcamos todos las lineas de la tabla
+              if (newRowSelectionModel.type == 'exclude') {
+                const idsPedidos = Array.from(pedidos || []).map(pedido => String(pedido.idtpv_comanda));
+                setRowSelectionModel(idsPedidos);
+              }
+            } else {
+              setRowSelectionModel([]);
             }
+
           }}
           columns={columns}
           slots={{ toolbar: CustomToolbar }}

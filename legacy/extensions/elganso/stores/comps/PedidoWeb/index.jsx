@@ -448,7 +448,6 @@ function PedidoWeb({ _estilos, ...props }) {
         expanded={localExpanded}
         onChange={(e, isExpanded) => {
           setLocalExpanded(isExpanded);
-          e.stopPropagation();
         }}
       >
         <AccordionSummary
