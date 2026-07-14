@@ -21,6 +21,11 @@ export const menuVentas = {
     },
     // ********** Sección Pedidos **********
     "Pedidos": { icono: "tienda", posicion: 3 },
+    "Pedidos/Listado de Pedidos": {
+        url: "/ventas/pedido",
+        regla: "ventas.pedido.leer",
+        icono: "fichero",
+    },
     "Pedidos/Preparación Pedidos Web": {
         url: "/pedidos_web",
         icono: "bolsa",
