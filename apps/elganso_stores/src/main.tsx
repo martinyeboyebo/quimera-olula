@@ -1,5 +1,12 @@
+console.log("Elganso Stores - Vite config");
+
+/* window.onerror = function (message, file, lineNumber, column, error) {
+  return true;
+}; //Para evitar que los errores de js bloqueen
+*/
+
 import { authMiddleware } from "#/auth/middlewares.ts";
-import { Vista } from "@olula/componentes/index.ts";
+import { Vista } from "@olula/componentes/vista/Vista.tsx";
 import "@olula/lib/comun.css";
 import { FactoryObj, FactoryProvider } from "@olula/lib/factory_ctx.tsx";
 import { crearMenu, MenuContextFactory } from "@olula/lib/menu.ts";

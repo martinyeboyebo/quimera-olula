@@ -2,12 +2,159 @@
 <html lang="es">
 
 <head>
+    <!-- Chrome 44 lanza excepción en insertRule() si la regla usa sintaxis CSS que no
+         reconoce (p. ej. :focus-within, usado por Plotly). Sin este parche, esa excepción
+         no capturada rompe la carga de la app. Las reglas compatibles se siguen insertando
+         igual; solo se ignoran en silencio las que el motor no puede parsear. -->
+    <script>
+        if (window.CSSStyleSheet && CSSStyleSheet.prototype.insertRule) {
+            var insertRuleOriginal = CSSStyleSheet.prototype.insertRule;
+            CSSStyleSheet.prototype.insertRule = function (rule, index) {
+                try {
+                    return insertRuleOriginal.call(this, rule, index);
+                } catch (e) {
+                    return 0;
+                }
+            };
+        }
+    </script>
+
+    <!-- Chrome 44 lanza SyntaxError si se construye un RegExp con flags que no soporta
+         (p. ej. 'u', 's'). El polyfill de RegExp de core-js (incluido por @vitejs/plugin-legacy
+         para este target) construye un RegExp nativo con esos flags sin comprobar antes si el
+         motor los soporta, y esa excepción sin capturar rompe la carga de la app. Se reintenta
+         sin los flags no soportados en vez de explotar; solo afecta al modo "unicode"/"sticky"
+         de esas expresiones regulares concretas, no al resto de su comportamiento. -->
+    <script>
+        (function () {
+            var RegExpNativo = window.RegExp;
+            function RegExpConFallback(patron, flags) {
+                try {
+                    return new RegExpNativo(patron, flags);
+                } catch (e) {
+                    if (e instanceof SyntaxError && flags) {
+                        try {
+                            return new RegExpNativo(patron, flags.replace(/[us]/g, ''));
+                        } catch (e2) {
+                            // sigue fallando por otro motivo: propagamos el original
+                        }
+                    }
+                    throw e;
+                }
+            }
+            RegExpConFallback.prototype = RegExpNativo.prototype;
+            window.RegExp = RegExpConFallback;
+        })();
+    </script>
+
+    <!-- Chrome 44 no tiene AbortController (llegó en Chrome 66) — es una API Web, no de
+         lenguaje, así que core-js no la cubre. react-router v7 la usa internamente para
+         cancelar loaders/fetchers en cada navegación, y sin ella cualquier código que la
+         referencie revienta con ReferenceError. Polyfill mínimo: soporta new AbortController(),
+         .signal, .abort() y signal.addEventListener('abort', cb); no cubre AbortSignal.timeout()
+         ni AbortSignal.abort() estáticos, que no parece necesitar esta app. -->
+    <script>
+        if (typeof window.AbortController === 'undefined') {
+            (function () {
+                function AbortSignalPolyfill() {
+                    this.aborted = false;
+                    this._listeners = [];
+                }
+                AbortSignalPolyfill.prototype.addEventListener = function (type, listener) {
+                    if (type === 'abort') this._listeners.push(listener);
+                };
+                AbortSignalPolyfill.prototype.removeEventListener = function (type, listener) {
+                    if (type === 'abort') {
+                        var idx = this._listeners.indexOf(listener);
+                        if (idx >= 0) this._listeners.splice(idx, 1);
+                    }
+                };
+                AbortSignalPolyfill.prototype.dispatchEvent = function () { return true; };
+                function AbortControllerPolyfill() {
+                    this.signal = new AbortSignalPolyfill();
+                }
+                AbortControllerPolyfill.prototype.abort = function () {
+                    var signal = this.signal;
+                    if (signal.aborted) return;
+                    signal.aborted = true;
+                    for (var i = 0; i < signal._listeners.length; i++) {
+                        try { signal._listeners[i].call(signal, { type: 'abort' }); } catch (e) { /* ignorado */ }
+                    }
+                };
+                window.AbortController = AbortControllerPolyfill;
+                window.AbortSignal = AbortSignalPolyfill;
+            })();
+        }
+    </script>
+
+    <!-- HTMLDialogElement.close() lanza excepción si el diálogo ya está cerrado. Alguna
+         librería (MUI Modal probablemente) lo llama sin comprobar el estado antes. Cerrar
+         un diálogo ya cerrado no debería ser un error — se convierte en no-op. -->
+    <script>
+        if (window.HTMLDialogElement && HTMLDialogElement.prototype.close) {
+            var dialogCloseOriginal = HTMLDialogElement.prototype.close;
+            HTMLDialogElement.prototype.close = function (returnValue) {
+                try {
+                    return dialogCloseOriginal.call(this, returnValue);
+                } catch (e) {
+                    // ya estaba cerrado: no-op
+                }
+            };
+        }
+    </script>
+
+    <!-- DIAGNÓSTICO TEMPORAL: pinta en pantalla cualquier error/rechazo no capturado -->
+    <script>
+        function pintarErrorDiagnostico(titulo, detalle) {
+            var pre = document.createElement('pre');
+            pre.style.cssText = 'white-space:pre-wrap;word-break:break-word;color:red;background:#fff;padding:12px;font-size:12px;';
+            pre.textContent = titulo + '\n' + detalle;
+            document.body.appendChild(pre);
+        }
+        function mostrarErrorDiagnostico(titulo, detalle) {
+            if (document.body) {
+                pintarErrorDiagnostico(titulo, detalle);
+            } else {
+                document.addEventListener('DOMContentLoaded', function () {
+                    pintarErrorDiagnostico(titulo, detalle);
+                });
+            }
+        }
+        window.addEventListener('error', function (e) {
+            var detalle = (e.error && e.error.stack) || e.message || String(e);
+            mostrarErrorDiagnostico('ERROR: ' + e.message + ' (' + e.filename + ':' + e.lineno + ':' + e.colno + ')', detalle);
+        });
+        window.addEventListener('unhandledrejection', function (e) {
+            var reason = e.reason;
+            var detalle = (reason && (reason.stack || reason.message)) || String(reason);
+            mostrarErrorDiagnostico('UNHANDLED REJECTION:', detalle);
+        });
+        var consoleErrorOriginal = console.error;
+        console.error = function () {
+            for (var i = 0; i < arguments.length; i++) {
+                var arg = arguments[i];
+                if (arg && (arg instanceof Error || arg.name === 'DOMException' || typeof arg.message === 'string')) {
+                    mostrarErrorDiagnostico('CONSOLE.ERROR (' + (arg.name || 'Error') + '):', arg.stack || arg.message || String(arg));
+                }
+            }
+            return consoleErrorOriginal.apply(console, arguments);
+        };
+    </script>
+
     <meta charset="UTF-8" />
     <title>Elganso Stores</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="stylesheet" href="/index.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- es5-shim/es6-shim quitados: @vitejs/plugin-legacy ya inyecta polyfills de core-js
+         para el target chrome 44, y el es6-shim cargado aparte moría a medias en esta
+         WebView (RegExp con flag 'u' no soportado), dejando el resto de sus polyfills sin instalar. -->
+    <script>
+        if (typeof globalThis === 'undefined') { window.globalThis = window; }
+    </script>
+
 </head>
 
 <body>
