@@ -6,6 +6,7 @@ import {
   formatearFechaString,
   formatearHoraString,
   formatearMoneda,
+  resolverDivisa,
 } from "@olula/lib/dominio.ts";
 import { ComponentType, Fragment, ReactNode, useState } from "react";
 import { QBoton } from "./qboton.tsx";
@@ -25,7 +26,7 @@ type MetaColumna<T extends Entidad> = {
   prioridad?: "alta" | "media" | "baja";
   esTitulo?: boolean;
   tipo?: TipoColumna;
-  divisa?: string;
+  divisa?: string | ((entidad: T) => string);
   ancho?: string; // Ancho específico para esta columna
   render?: (entidad: T) => string | ReactNode;
 };
@@ -76,8 +77,10 @@ const a_string = (
 
   // console.log("valor", valor, "tipo", typeof valor);
 
-  if (tipo === "moneda" && typeof valor === "number") {
-    formateado = formatearMoneda(valor, divisa ?? "EUR");
+  if (tipo === "moneda") {
+    if (typeof valor === "number" || typeof valor === "string") {
+      formateado = formatearMoneda(valor, divisa ?? "EUR");
+    }
   } else if (tipo === "fecha" && typeof valor === "string") {
     formateado = formatearFechaString(valor);
   } else if (tipo === "fecha" && valor !== null && typeof valor === "object") {
@@ -85,7 +88,7 @@ const a_string = (
   } else if (tipo === "hora" && typeof valor === "string") {
     formateado = formatearHoraString(valor);
   } else if (tipo === "numero" && typeof valor === "number") {
-    formateado = valor.toLocaleString();
+    formateado = valor.toLocaleString("es-ES");
   } else if (typeof valor === "boolean") {
     formateado = valor ? "Sí" : "No";
   } else if (
@@ -123,7 +126,11 @@ const fila = <T extends Entidad>(
       cargando && typeof entidad[id] == "string"
         ? (entidad[id] as string)
         : (render?.(entidad as T) ??
-          a_string(entidad[id] as string, tipo, divisa));
+          a_string(
+            entidad[id] as string,
+            tipo,
+            resolverDivisa(divisa, entidad as T)
+          ));
 
     return (
       <td
@@ -338,7 +345,9 @@ export const QTablaControlada = <T extends Entidad>({
     if (!onSetSeleccionadas) return;
     if (todosSeleccionados) {
       const idsEnPagina = new Set(datos.map((e) => e.id));
-      onSetSeleccionadas(seleccionadasIds!.filter((id) => !idsEnPagina.has(id)));
+      onSetSeleccionadas(
+        seleccionadasIds!.filter((id) => !idsEnPagina.has(id))
+      );
     } else {
       const idsNuevas = datos
         .filter((e) => !seleccionadasIds!.includes(e.id))

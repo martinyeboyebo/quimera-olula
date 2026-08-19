@@ -6,8 +6,10 @@ import {
   IconArrowBackUp,
   IconArrowBarRight,
   IconArrowForwardUp,
+  IconArrowUpRight,
   IconBackground,
   IconBasketDown,
+  IconBrandWhatsapp,
   IconBuildingStore,
   IconCalendar,
   IconCalendarEvent,
@@ -29,11 +31,17 @@ import {
   IconCopy,
   IconCreditCard,
   IconDeviceFloppy,
+  IconDownload,
   IconEdit,
   IconEye,
   IconFile,
+  IconFilePlus,
+  IconFolder,
+  IconFolderOpen,
+  IconFolderPlus,
   IconHome,
   IconHourglass,
+  IconLayoutKanban,
   IconLink,
   IconList,
   IconListDetails,
@@ -42,6 +50,7 @@ import {
   IconLogout,
   IconMail,
   IconMenu2,
+  IconMessageChatbot,
   IconMinus,
   IconPackage,
   IconPackageExport,
@@ -63,6 +72,7 @@ import {
   IconTag,
   IconTool,
   IconTrash,
+  IconUpload,
   IconUser,
   IconUserCircle,
   IconUsers,
@@ -77,6 +87,7 @@ type QIconoProps = {
   nombre: string;
   tamaño?: "xs" | "sm" | "md" | "lg" | "xl";
   color?: string;
+  relleno?: boolean | string;
   style?: React.CSSProperties;
 };
 
@@ -100,6 +111,12 @@ const iconos: Record<string, Icon> = {
   cerrar: IconX,
   inicio: IconHome,
   fichero: IconFile,
+  documento_nuevo: IconFilePlus,
+  carpeta: IconFolder,
+  carpeta_abierta: IconFolderOpen,
+  carpeta_nueva: IconFolderPlus,
+  subir: IconUpload,
+  descargar: IconDownload,
   grafico_barras: IconChartBar,
   candado: IconLock,
   candado_abierto: IconLockOpen,
@@ -110,6 +127,7 @@ const iconos: Record<string, Icon> = {
   copiar: IconCopy,
   usuario: IconUser,
   perfil: IconUser,
+  asistente: IconMessageChatbot,
   grupo: IconUsersGroup,
   cerrar_sesion: IconLogout,
   verdadero: IconCheck,
@@ -119,6 +137,7 @@ const iconos: Record<string, Icon> = {
   deshacer: IconArrowBackUp,
   rehacer: IconArrowForwardUp,
   enlace: IconLink,
+  arriba_derecha: IconArrowUpRight,
   alinear_izquierda: IconAlignLeft,
   alinear_centro: IconAlignCenter,
   alinear_derecha: IconAlignRight,
@@ -129,6 +148,7 @@ const iconos: Record<string, Icon> = {
   x_circle: IconCircleX,
   minus: IconMinus,
   lista: IconList,
+  kanban: IconLayoutKanban,
   carrito: IconShoppingCart,
   tarjeta: IconCreditCard,
   etiqueta_compra: IconTag,
@@ -145,6 +165,7 @@ const iconos: Record<string, Icon> = {
   circulo_relleno: IconCircleFilled,
   telefono: IconPhone,
   correo: IconMail,
+  whatsapp: IconBrandWhatsapp,
   casa: IconHome,
   tarea: IconCheckbox,
   estrella: IconStar,
@@ -172,14 +193,26 @@ export const QIcono = ({
   nombre,
   tamaño = "md",
   color,
+  relleno,
   style,
 }: QIconoProps) => {
   const Icono = iconos[nombre] ?? IconQuestionMark;
   const size = tamaños[tamaño] ?? 20;
+  const fill =
+    typeof relleno === "string"
+      ? relleno
+      : relleno
+        ? "var(--color-primario-claro)"
+        : undefined;
 
   return (
     <quimera-icono>
-      <Icono size={size} color={color} style={style} />
+      <Icono
+        size={size}
+        color={color}
+        style={style}
+        {...(fill ? { fill } : {})}
+      />
     </quimera-icono>
   );
 };

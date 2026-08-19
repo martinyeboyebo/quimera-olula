@@ -1,4 +1,5 @@
 import { Permiso, permisosGrupo } from "./api/permisos.ts";
+import { QError } from "./contexto.ts";
 import { ClausulaFiltro, Contexto, Criteria, Direccion, Entidad, EventoMaquina, Filtro, Maquina, Modelo, Orden, ProcesarContexto, TipoInput, ValorCampoUI } from "./diseño.ts";
 import { filtroDefecto, ordenDefecto, paginacionDefecto } from "./url-params.ts";
 import { UiProps, ValorControl } from "./useModelo.ts";
@@ -423,7 +424,8 @@ const getUiProps = <M extends Modelo>(
     modeloInicial: M,
     meta: MetaModelo<M>,
     onModeloCambiado: (modelo: M) => void,
-    onModeloListo?: (modelo: M) => Promise<void>
+    onModeloListo?: (modelo: M) => Promise<void>,
+    errorGuardado?: QError | null
 ) =>
     (campo: string, secundario?: string): UiProps => {
 
@@ -437,6 +439,7 @@ const getUiProps = <M extends Modelo>(
                 : '';
         const editable = modeloEsEditable(meta)(modelo, campo);
         const cambiado = valor !== modeloInicial[campo];
+        const falloGuardado = !!errorGuardado && cambiado;
         const campos = meta.campos || {};
         const tipoCampo = campo in campos && campos[campo]?.tipo
             ? campos[campo].tipo
@@ -457,8 +460,8 @@ const getUiProps = <M extends Modelo>(
             valor: valorUI,
             tipo: tipo,
             deshabilitado: !editable,
-            valido: cambiado && valido,
-            erroneo: !valido,
+            valido: cambiado && valido && !falloGuardado,
+            erroneo: !valido || falloGuardado,
             advertido: false,
             opcional,
             modificado: cambiado,
@@ -607,7 +610,8 @@ export const getFormProps = <M extends Modelo>(
     modeloInicial: M,
     meta: MetaModelo<M>,
     onModeloCambiado: (modelo: M) => void,
-    onModeloListo?: (modelo: M) => Promise<void>
+    onModeloListo?: (modelo: M) => Promise<void>,
+    errorGuardado?: QError | null
 ): FormModelo => {
     return {
         uiProps: getUiProps(
@@ -615,7 +619,8 @@ export const getFormProps = <M extends Modelo>(
             modeloInicial,
             meta,
             onModeloCambiado,
-            onModeloListo
+            onModeloListo,
+            errorGuardado
         ),
         modificado: modeloModificado(modeloInicial, modelo),
         valido: modeloEsValido(meta)(modelo),
@@ -637,14 +642,49 @@ export const modeloModificado = <T extends Modelo>(valor_inicial: T, valor: T) =
     )
 }
 
-export const formatearMoneda = (cantidad: number, divisa: string): string => {
+// const aNumeroMoneda = (cantidad: number | string): number | null => {
+//     if (typeof cantidad === "number") {
+//         return Number.isFinite(cantidad) ? cantidad : null;
+//     }
+
+//     const limpio = cantidad
+//         .trim()
+//         .replace(/[^0-9,.-]/g, "")
+//         .replace(/\s+/g, "");
+
+//     if (!limpio) return null;
+
+//     const hayComa = limpio.includes(",");
+//     const hayPunto = limpio.includes(".");
+
+//     const normalizado = hayComa && hayPunto
+//         ? limpio.replace(/\./g, "").replace(/,/g, ".")
+//         : hayComa
+//             ? limpio.replace(/,/g, ".")
+//             : limpio;
+
+//     const numero = Number(normalizado);
+//     return Number.isFinite(numero) ? numero : null;
+// }
+
+export const formatearMoneda = (cantidad: number | string, divisa: string): string => {
+    // const numero = aNumeroMoneda(cantidad);
+    const numero = Number(cantidad);
+    if (isNaN(numero)) return "";
+
     const divisaValida = divisa && divisa.trim() ? divisa.trim().toUpperCase() : "EUR";
     const locale = divisaValida === "EUR" ? "es-ES" : "en-US";
     return new Intl.NumberFormat(locale, {
         style: "currency",
         currency: divisaValida,
-    }).format(cantidad);
+        useGrouping: "always",
+    }).format(numero);
 };
+
+export const resolverDivisa = <T,>(
+    divisa: string | ((entidad: T) => string) | undefined,
+    entidad: T
+): string | undefined => (typeof divisa === "function" ? divisa(entidad) : divisa);
 
 function decimalesPorMoneda(divisa: string): number {
     const numberFormatUSD = new Intl.NumberFormat('en-US', {
@@ -807,6 +847,7 @@ export const transformarCriteria = (relacion: RelacionDeCampos): (criteria: Crit
     //     return { and: filtro.and.map(transformarFiltro) };
     // };
     const transformarFiltro = (filtro: Filtro): Filtro => {
+        if (Array.isArray(filtro) && filtro.length === 0) return filtro;
         if (Array.isArray(filtro) && Array.isArray(filtro[0])) return (filtro as ClausulaFiltro[]).map(transformarClausula);
         if (Array.isArray(filtro)) return transformarClausula(filtro as ClausulaFiltro);
         if ('or' in filtro) return { or: filtro.or.map(transformarFiltro) };

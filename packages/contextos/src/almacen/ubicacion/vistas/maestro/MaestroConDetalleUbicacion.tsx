@@ -4,7 +4,6 @@ import { Listado } from "@olula/componentes/maestro/Listado.tsx";
 import { MaestroDetalle } from "@olula/componentes/maestro/MaestroDetalle.tsx";
 import { listaActivaEntidadesInicial } from "@olula/lib/ListaActivaEntidades.js";
 import { getUrlParams, useUrlParams } from "@olula/lib/url-params.js";
-import { useLayout } from "@olula/lib/useLayout.js";
 import { useEffect } from "react";
 import { Ubicacion } from "../../diseño.ts";
 import { CrearUbicacion } from "../crear/CrearUbicacion.tsx";
@@ -13,8 +12,6 @@ import { metaTablaUbicacion } from "./diseño.ts";
 import { getMaquina } from "./maquina.ts";
 
 export const MaestroConDetalleUbicacion = () => {
-    const { layout, cambiarLayout } = useLayout("TABLA");
-
     const { id, criteria } = getUrlParams();
 
     const { ctx, emitir } = useMaquina(getMaquina, {
@@ -35,20 +32,19 @@ export const MaestroConDetalleUbicacion = () => {
                 Maestro={
                     <>
                         <h2>Ubicaciones</h2>
-                        <div className="maestro-botones">
-                            <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
-                            <QBoton onClick={cambiarLayout}>
-                                {layout === "TARJETA" ? "Cambiar a TABLA" : "Cambiar a TARJETA"}
-                            </QBoton>
-                        </div>
                         <Listado<Ubicacion>
                             metaTabla={metaTablaUbicacion}
                             criteria={ctx.ubicaciones.criteria}
-                            modo={layout === "TARJETA" ? "tarjetas" : "tabla"}
+                            modoInicial="tabla"
                             tarjeta={TarjetaUbicacion}
                             entidades={ctx.ubicaciones.lista}
                             totalEntidades={ctx.ubicaciones.total}
                             seleccionada={ctx.ubicaciones.activo}
+                            renderAcciones={() => (
+                                <div className="maestro-botones">
+                                    <QBoton onClick={() => emitir("crear")}>Nueva</QBoton>
+                                </div>
+                            )}
                             onSeleccion={(payload) => emitir("ubicacion_seleccionada", payload)}
                             onCriteriaChanged={(payload) => emitir("criteria_cambiado", payload)}
                             onSiguientePagina={(payload) => emitir("siguiente_pagina", payload)}
@@ -61,7 +57,6 @@ export const MaestroConDetalleUbicacion = () => {
                         publicar={emitir}
                     />
                 }
-                layout={layout}
                 seleccionada={ctx.ubicaciones.activo}
                 modoDisposicion="maestro-50"
             />
@@ -76,7 +71,7 @@ const TarjetaUbicacion = (ubicacion: Ubicacion) => {
     return (
         <div className="tarjeta-ubicacion" key={ubicacion.id}>
             <div>{ubicacion.codigo}</div>
-            <div>{ubicacion.almacenId}</div>
+            <div>{ubicacion.zona}</div>
         </div>
     );
 };
