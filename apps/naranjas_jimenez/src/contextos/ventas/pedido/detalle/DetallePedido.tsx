@@ -148,6 +148,7 @@ export const DetallePedidoNrj = ({
             lineaActiva={lineaActiva}
             publicar={emitir}
             estadoPedido={estado}
+            pedidoEditable={editable(ctx.pedido)}
           />
 
           {estado === "BORRANDO_PEDIDO" && (
