@@ -6,7 +6,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import MuiInput from "@mui/material/Input";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, Button, Field, Grid, Icon, IconButton } from "@quimera/comps";
-import { navigate } from "hookrouter";
+import { navigate } from "quimera/base";
 import Quimera, { PropValidation, useStateValue, useWidth } from "quimera";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import useSound from "use-sound";
