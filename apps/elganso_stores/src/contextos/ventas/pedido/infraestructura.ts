@@ -139,6 +139,17 @@ export const patchCambiarCliente: PatchClientePedido = async (id, cambio) => {
   }, "Error al cambiar cliente del pedido");
 }
 
+export interface CambiosDatosCliente {
+  email: string;
+  tarjeta_puntos_id: string;
+}
+
+export const patchDatosCliente = async (id: string, cambios: CambiosDatosCliente): Promise<void> => {
+  await RestAPI.patch(`${baseUrl}/${id}/datos_cliente`, {
+    cambios
+  }, "Error al actualizar email/tarjeta del pedido");
+}
+
 export const patchCambiarDescuento = async (id: string, dto_porcentual: number): Promise<void> => {
   await RestAPI.patch(`${baseUrl}/${id}`, {
     cambios: {

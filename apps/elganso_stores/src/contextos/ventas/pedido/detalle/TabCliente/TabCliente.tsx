@@ -1,92 +1,118 @@
-import { Cliente } from "#/ventas/comun/componentes/cliente.tsx";
-import { formatearDireccionVenta } from "#/ventas/comun/dominio.ts";
-import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
-import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
+import { CamposDireccionVenta } from "#/ventas/comun/componentes/CamposDireccionVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
+import { metaCambioClienteNoRegistrado } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/dominio.ts";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { HookModelo } from "@olula/lib/useModelo.ts";
+import { MetaModelo } from "@olula/lib/dominio.ts";
+import { HookModelo, useModelo, UiProps } from "@olula/lib/useModelo.ts";
+import { useMemo } from "react";
+import { CambiosDatosCliente } from "../../infraestructura.ts";
 import { Pedido } from "../../diseño.ts";
-import { EstadoPedido } from "../diseño.ts";
 import "./TabCliente.css";
+
+const metaDatosCliente: MetaModelo<CambiosDatosCliente> = { campos: {} };
 
 export interface TabClienteProps {
   pedido: HookModelo<Pedido>;
-  estado: EstadoPedido;
   publicar?: (evento: string, payload?: unknown) => void;
 }
 
-// Además del cliente/dirección genéricos, una venta TPV de El Ganso trae
-// email, teléfono y tarjeta de fidelización Gansociety (tal como se ve en
-// la ficha de la comanda en Eneboo).
+// Venta TPV de El Ganso: no hay cliente registrado (siempre "Venta PDA"), así
+// que se edita directamente el mismo formulario de "cliente no registrado"
+// del CambioClienteVenta genérico, pero inline en el tab (sin modal) y con
+// guardado automático al salir de cada campo, igual que el resto de tabs.
 export const TabCliente = ({
   pedido,
-  estado,
   publicar = async () => {},
 }: TabClienteProps) => {
-  const { modelo, editable: clienteEditable } = pedido;
+  const { modelo, editable } = pedido;
+  const { nombre_cliente, id_fiscal, direccion } = modelo.cliente;
+
+  const cambioInicial = useMemo(
+    (): CambioCliente => ({
+      nombre_cliente: nombre_cliente ?? "",
+      id_fiscal: id_fiscal ?? "",
+      tipo_via: direccion?.tipo_via ?? "",
+      nombre_via: direccion?.nombre_via ?? "",
+      numero: direccion?.numero ?? "",
+      otros: direccion?.otros ?? "",
+      cod_postal: direccion?.cod_postal ?? "",
+      ciudad: direccion?.ciudad ?? "",
+      provincia: direccion?.provincia ?? "",
+      pais_id: direccion?.pais_id ?? "",
+      apartado: direccion?.apartado ?? "",
+      telefono: direccion?.telefono ?? "",
+    }),
+    [
+      nombre_cliente,
+      id_fiscal,
+      direccion?.tipo_via,
+      direccion?.nombre_via,
+      direccion?.numero,
+      direccion?.otros,
+      direccion?.cod_postal,
+      direccion?.ciudad,
+      direccion?.provincia,
+      direccion?.pais_id,
+      direccion?.apartado,
+      direccion?.telefono,
+    ]
+  );
 
   const onGuardarCambioCliente = async (cambios: CambioCliente) => {
-    publicar("cambio_cliente_listo", cambios);
+    await publicar("cambio_cliente_listo", cambios);
   };
+
+  const { uiProps: uiPropsCliente } = useModelo(
+    metaCambioClienteNoRegistrado,
+    cambioInicial,
+    onGuardarCambioCliente
+  );
+
+  // El formulario de cliente solo es editable mientras el pedido lo sea
+  // (Cerrada/Anulada quedan bloqueadas, igual que el resto de campos).
+  const uiProps = (campo: string, secundario?: string): UiProps => ({
+    ...uiPropsCliente(campo, secundario),
+    deshabilitado: !editable,
+  });
+
+  const datosClienteInicial = useMemo(
+    (): CambiosDatosCliente => ({
+      email: modelo.email ?? "",
+      tarjeta_puntos_id: modelo.tarjeta_puntos_id ?? "",
+    }),
+    [modelo.email, modelo.tarjeta_puntos_id]
+  );
+
+  const onGuardarDatosCliente = async (cambios: CambiosDatosCliente) => {
+    await publicar("datos_cliente_listo", cambios);
+  };
+
+  const { uiProps: uiPropsDatosCliente } = useModelo(
+    metaDatosCliente,
+    datosClienteInicial,
+    onGuardarDatosCliente
+  );
 
   return (
     <div className="TabCliente">
-      <quimera-formulario>
-        <Cliente
-          nombre="cliente_id"
-          valor={modelo.cliente.cliente_id ?? ""}
-          descripcion={modelo.cliente.nombre_cliente}
-          deshabilitado={true}
-        />
-        <QInput
-          nombre="id_fiscal"
-          label="ID Fiscal"
-          valor={modelo.cliente.id_fiscal}
-          deshabilitado={true}
-        />
-
-        {clienteEditable && (
-          <div className="TabCliente-accion">
-            <BotonCambiar
-              titulo="Cambiar cliente y dirección"
-              onClick={() => publicar("cambio_cliente_solicitado")}
-            />
-          </div>
-        )}
-
-        <QInput
-          deshabilitado={true}
-          label="Dirección"
-          nombre="direccion_cliente"
-          valor={formatearDireccionVenta(modelo.cliente.direccion)}
-        />
-        <QInput
-          deshabilitado={true}
-          label="Teléfono"
-          nombre="telefono"
-          valor={modelo.cliente.direccion.telefono}
-        />
-        <QInput
-          deshabilitado={true}
-          label="Email"
-          nombre="email"
-          valor={modelo.email ?? ""}
-        />
-        <QInput
-          deshabilitado={true}
-          label="Tarjeta Gansociety"
-          nombre="tarjeta_puntos_id"
-          valor={modelo.tarjeta_puntos_id ?? ""}
-        />
+      <quimera-formulario className="campos-direccion">
+        <QInput label="Nombre del Cliente" {...uiProps("nombre_cliente")} />
+        <QInput label="C.I.F/N.I.F" {...uiProps("id_fiscal")} />
+        <CamposDireccionVenta uiProps={uiProps} />
       </quimera-formulario>
 
-      {clienteEditable && estado === "CAMBIANDO_CLIENTE" && (
-        <CambioClienteVenta
-          venta={pedido}
-          onGuardar={onGuardarCambioCliente}
-          onCancelar={() => publicar("cambio_cliente_cancelado")}
+      <quimera-formulario>
+        <QInput
+          label="Email"
+          {...uiPropsDatosCliente("email")}
+          deshabilitado={!editable}
         />
-      )}
+        <QInput
+          label="Tarjeta Gansociety"
+          {...uiPropsDatosCliente("tarjeta_puntos_id")}
+          deshabilitado={!editable}
+        />
+      </quimera-formulario>
     </div>
   );
 };

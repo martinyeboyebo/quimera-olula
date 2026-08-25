@@ -75,7 +75,6 @@ export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 export type EstadoPedido = (
     'INICIAL' | 'ABIERTO' | 'SERVIDO'
     | 'BORRANDO_PEDIDO'
-    | 'CAMBIANDO_CLIENTE'
     | 'CAMBIANDO_DESCUENTO'
     | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
 );

@@ -101,7 +101,7 @@ export const DetallePedido = ({
         </Tab>
 
         <Tab label="Cliente">
-          <TabCliente pedido={pedido} estado={estado} publicar={emitir} />
+          <TabCliente pedido={pedido} publicar={emitir} />
         </Tab>
       </Tabs>
 

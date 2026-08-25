@@ -7,11 +7,13 @@ import {
     Pedido
 } from "../diseño.ts";
 import {
+    CambiosDatosCliente,
     getLineas,
     getPedido,
     patchCambiarCliente,
     patchCambiarDescuento,
     patchCantidadLinea,
+    patchDatosCliente,
     patchPedido
 } from "../infraestructura.ts";
 import { ContextoPedido, EstadoPedido } from "./diseño.ts";
@@ -183,6 +185,17 @@ export const borrarPedido: ProcesarPedido = async (contexto) => {
 export const cambiarCliente: ProcesarPedido = async (contexto, payload) => {
     const cambio = payload as CambioClientePedido;
     await patchCambiarCliente(contexto.pedido.id, cambio);
+
+    return pipePedido(contexto, [
+        refrescarPedido,
+        refrescarLineas,
+        'ABIERTO',
+    ]);
+}
+
+export const cambiarDatosCliente: ProcesarPedido = async (contexto, payload) => {
+    const cambios = payload as CambiosDatosCliente;
+    await patchDatosCliente(contexto.pedido.id, cambios);
 
     return pipePedido(contexto, [
         refrescarPedido,

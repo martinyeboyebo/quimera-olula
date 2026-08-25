@@ -1,79 +1,38 @@
+/*
+ * Nombre del Cliente/ID Fiscal y el resto de campos de dirección (tipo_via,
+ * nombre_via, numero, otros, cod_postal, ciudad, provincia, pais_id,
+ * telefono) se editan aquí mismo, inline. Estos últimos ya traen su propio
+ * grid-column desde CamposDireccionVenta.css (activo vía la clase
+ * "campos-direccion" del quimera-formulario) — solo hace falta posicionar
+ * los campos propios de este tab.
+ */
 .Pedido .TabCliente {
-    >quimera-formulario {
-        quimera-autocompletar[nombre="cliente_id"] {
-            grid-column: 1 / span 8;
-            min-width: 0;
-        }
+    quimera-input[nombre="nombre_cliente"] {
+        grid-column: 1 / span 8;
+        min-width: 0;
+    }
 
-        quimera-input[nombre="id_fiscal"] {
-            grid-column: 9 / span 3;
-            min-width: 0;
-        }
+    quimera-input[nombre="id_fiscal"] {
+        grid-column: 9 / span 4;
+        min-width: 0;
+    }
 
-        .TabCliente-accion {
-            grid-column: 12 / span 1;
-            display: flex;
-            justify-content: flex-end;
-            align-items: end;
-            margin: 0;
-            min-width: 0;
-        }
+    quimera-input[nombre="email"] {
+        grid-column: span 6;
+    }
 
-        quimera-input[nombre="direccion_cliente"] {
-            grid-column: 1 / -1;
-        }
-
-        quimera-input[nombre="telefono"] {
-            grid-column: 1 / span 6;
-        }
-
-        quimera-input[nombre="email"] {
-            grid-column: span 6;
-        }
-
-        quimera-input[nombre="tarjeta_puntos_id"] {
-            grid-column: 1 / -1;
-        }
+    quimera-input[nombre="tarjeta_puntos_id"] {
+        grid-column: span 6;
     }
 }
 
-/*
- * Móvil: 2 columnas de campos + 1 columna estrecha para el icono de cambio,
- * que solo existe cuando se renderiza .TabCliente-accion.
- */
 @media (max-width: 768px) {
-    .Pedido .TabCliente>quimera-formulario:has(.TabCliente-accion) {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 2.5rem;
-    }
-
     .Pedido .TabCliente {
-        >quimera-formulario {
-            quimera-autocompletar[nombre="cliente_id"] {
-                grid-column: 1 / span 1 !important;
-            }
-
-            quimera-input[nombre="id_fiscal"] {
-                grid-column: 2 / span 1 !important;
-            }
-
-            quimera-input[nombre="direccion_cliente"],
-            quimera-input[nombre="tarjeta_puntos_id"] {
-                grid-column: 1 / -1;
-            }
-
-            quimera-input[nombre="telefono"] {
-                grid-column: 1 / span 1 !important;
-            }
-
-            quimera-input[nombre="email"] {
-                grid-column: 2 / span 1 !important;
-            }
-
-            .TabCliente-accion {
-                grid-column: 3 / span 1 !important;
-                grid-row: 1;
-                justify-content: flex-end;
-            }
+        quimera-input[nombre="nombre_cliente"],
+        quimera-input[nombre="id_fiscal"],
+        quimera-input[nombre="email"],
+        quimera-input[nombre="tarjeta_puntos_id"] {
+            grid-column: 1 / -1 !important;
         }
     }
 }
