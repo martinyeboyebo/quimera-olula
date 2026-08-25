@@ -1,6 +1,4 @@
 import { Articulo } from "#/almacen/comun/componentes/Articulo.tsx";
-import ApiUrls from "#/ventas/comun/urls.ts";
-import { RestAPI } from "@olula/lib/api/rest_api.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { QSelect } from "@olula/componentes/atomos/qselect.tsx";
@@ -8,37 +6,11 @@ import { QModal } from "@olula/componentes/index.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useCallback, useEffect, useState } from "react";
-
-type TallaArticulo = { talla: string; barcode: string };
-
-type TallasArticuloApi = {
-  tallas: TallaArticulo[];
-  codbarras: string | null;
-};
-
-const getTallasArticulo = (referencia: string) =>
-  RestAPI.get<TallasArticuloApi>(`${new ApiUrls().ARTICULO}/${referencia}/talla`);
-
-const postLineaGan = async (
-  pedidoId: string,
-  linea: { articuloId: string; barcode?: string; cantidad: number }
-) => {
-  await RestAPI.post(
-    `${new ApiUrls().PEDIDO}/${pedidoId}/linea`,
-    {
-      lineas: [
-        {
-          articulo: {
-            articulo_id: linea.articuloId,
-            ...(linea.barcode ? { barcode: linea.barcode } : {}),
-          },
-          cantidad: linea.cantidad,
-        },
-      ],
-    },
-    "Error al crear linea de pedido"
-  );
-};
+import {
+  getTallasArticulo,
+  postLineaGan,
+  TallaArticulo,
+} from "./infraestructuraGan.ts";
 
 export type CrearLineaGanProps = {
   pedidoId: string;

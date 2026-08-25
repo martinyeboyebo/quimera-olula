@@ -1,0 +1,14 @@
+// El input de escaneo (con etiqueta encima) es más alto que los botones
+// Nueva/Editar/Borrar: se centran verticalmente para que no queden pegados
+// arriba dentro de la misma fila. Repite el selector de quimera-acciones
+// (que fija margin: 0 5px) con el ámbito de El Ganso delante para ganarle
+// en especificidad sin tocar el CSS compartido.
+.LineasListaGan-botones {
+  quimera-acciones {
+    .acciones.acciones-inline {
+      quimera-boton {
+        margin: auto 5px;
+      }
+    }
+  }
+}

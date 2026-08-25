@@ -65,6 +65,11 @@ export const getMaquina = (): Maquina<EstadoPedido, ContextoPedido> => {
 
             cambio_cantidad_linea_solicitado: cambiarCantidadLinea,
 
+            // Permite crear una línea sin pasar por el modal (p.ej. al
+            // escanear un código de barras directamente en el listado):
+            // mismo evento y procesador que ya usa CREANDO_LINEA.
+            alta_linea_lista: [crearLinea],
+
             pedido_deseleccionado: [
                 getContextoVacio,
                 publicar('pedido_deseleccionado', null)

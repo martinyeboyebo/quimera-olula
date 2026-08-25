@@ -47,6 +47,7 @@ export const Lineas = ({
     <>
       <LineasLista
         key={pedido.id}
+        pedidoId={pedido.id}
         lineas={pedido.lineas || []}
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}

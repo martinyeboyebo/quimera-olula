@@ -4,6 +4,7 @@ import { configEstadoPedidoGan } from "./pedido/configEstadoGan.tsx";
 import { CrearLineaGan } from "./pedido/CrearLineaGan.tsx";
 import { CrearPedidoGan } from "./pedido/CrearPedidoGan.tsx";
 import { metaPedidoGan } from "./pedido/dominio.ts";
+import { LineasListaGan } from "./pedido/LineasListaGan.tsx";
 import { TabDatosGan } from "./pedido/TabDatosGan.tsx";
 import { TabClienteGan } from "./pedido/TabClienteGan.tsx";
 
@@ -15,4 +16,5 @@ export class FactoryVentasGanso extends FactoryVentasOlula {
     static PedidoTabCliente = TabClienteGan;
     static PedidoCrear = CrearPedidoGan;
     static pedido_CrearLinea = CrearLineaGan;
+    static pedido_detalle_lineas_LineasLista = LineasListaGan;
 }
