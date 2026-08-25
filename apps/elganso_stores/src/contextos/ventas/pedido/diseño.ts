@@ -1,4 +1,3 @@
-import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
 import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "#/ventas/venta/diseño.ts";
@@ -15,6 +14,11 @@ export interface Pedido extends Venta {
     lineas: LineaPedido[];
     email?: string;
     tarjeta_puntos_id?: string;
+    hora?: string;
+    codtienda?: string;
+    codtpv_puntoventa?: string;
+    pagado?: number;
+    pendiente?: number;
 }
 
 // barcode/talla/color: código de barras real de la variante talla+color
@@ -68,14 +72,11 @@ export type PatchCantidadLinea = (id: string, linea: LineaPedido, cantidad: numb
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
-export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<void>;
-
 export type EstadoPedido = (
     'INICIAL' | 'ABIERTO' | 'SERVIDO'
     | 'BORRANDO_PEDIDO'
     | 'CAMBIANDO_CLIENTE'
     | 'CAMBIANDO_DESCUENTO'
-    | 'CAMBIANDO_AGENTE'
     | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
 );
 

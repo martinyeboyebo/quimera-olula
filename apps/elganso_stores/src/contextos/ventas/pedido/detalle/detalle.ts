@@ -1,5 +1,4 @@
 import { cambioClienteVentaVacio, clienteVentaVacio, metaVenta, ventaVacia } from "#/ventas/venta/dominio.ts";
-import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaCampo, MetaModelo, modeloEsEditable, publicar } from "@olula/lib/dominio.ts";
 import {
@@ -10,7 +9,6 @@ import {
 import {
     getLineas,
     getPedido,
-    patchCambiarAgente,
     patchCambiarCliente,
     patchCambiarDescuento,
     patchCantidadLinea,
@@ -35,7 +33,7 @@ export const cambioClientePedidoVacio: CambioClientePedido = cambioClienteVentaV
 
 const camposPedido: Record<string, MetaCampo<Pedido>> = {
     ...metaVenta.campos,
-    fecha: { tipo: "fecha", requerido: false },
+    fecha: { tipo: "fecha", requerido: true, bloqueado: true },
     almacen_id: { requerido: true },
     nombre_almacen: { bloqueado: true },
     agente_id: { bloqueado: true },
@@ -189,16 +187,6 @@ export const cambiarCliente: ProcesarPedido = async (contexto, payload) => {
     return pipePedido(contexto, [
         refrescarPedido,
         refrescarLineas,
-        'ABIERTO',
-    ]);
-}
-
-export const cambiarAgente: ProcesarPedido = async (contexto, payload) => {
-    const cambio = payload as CambioAgente;
-    await patchCambiarAgente(contexto.pedido.id, cambio);
-
-    return pipePedido(contexto, [
-        refrescarPedido,
         'ABIERTO',
     ]);
 }

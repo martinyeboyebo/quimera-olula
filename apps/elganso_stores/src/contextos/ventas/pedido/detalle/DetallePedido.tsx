@@ -1,10 +1,8 @@
 import { IndicadorGuardado } from "#/ventas/comun/componentes/IndicadorGuardado.tsx";
-import { CambiarAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/CambiarAgente.tsx";
 import { CambiarDescuento } from "#/ventas/comun/componentes/moleculas/CambiarDescuento/CambiarDescuento.tsx";
 import "#/ventas/comun/estilos/campos.css";
 import "#/ventas/comun/estilos/detalle_documento.css";
 import { tituloDocumentoVenta } from "#/ventas/venta/dominio.ts";
-import { TotalesVenta } from "#/ventas/venta/vistas/TotalesVenta.tsx";
 import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
@@ -20,7 +18,8 @@ import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
 import { TabDatos } from "./TabDatos.tsx";
-import { TabObservaciones } from "./TabObservaciones.tsx";
+import { TabPagos } from "./TabPagos.tsx";
+import { TotalesPedido } from "./TotalesPedido.tsx";
 
 export type DetallePedidoProps = {
   id?: string;
@@ -93,32 +92,23 @@ export const DetallePedido = ({
       </div>
 
       <Tabs>
+        <Tab label="Datos">
+          <TabDatos pedido={pedido} />
+        </Tab>
+
+        <Tab label="Pagos">
+          <TabPagos pedido={pedido} />
+        </Tab>
+
         <Tab label="Cliente">
           <TabCliente pedido={pedido} estado={estado} publicar={emitir} />
         </Tab>
-
-        <Tab label="Datos">
-          <TabDatos pedido={pedido} estado={estado} publicar={emitir} />
-        </Tab>
-
-        <Tab label="Observaciones">
-          <TabObservaciones pedido={pedido} />
-        </Tab>
       </Tabs>
 
-      <TotalesVenta modeloVenta={pedido} publicar={emitir} />
+      <TotalesPedido modeloVenta={pedido} publicar={emitir} />
 
       {estado === "CAMBIANDO_DESCUENTO" && (
         <CambiarDescuento publicar={emitir} venta={ctx.pedido} />
-      )}
-
-      {estado === "CAMBIANDO_AGENTE" && (
-        <CambiarAgente
-          publicar={emitir}
-          agenteId={ctx.pedido.agente_id}
-          nombreAgente={ctx.pedido.nombre_agente}
-          porComision={ctx.pedido.por_comision}
-        />
       )}
 
       <Lineas

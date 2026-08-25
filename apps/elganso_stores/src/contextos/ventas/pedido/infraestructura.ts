@@ -12,7 +12,6 @@ import {
   GetPedidos,
   LineaPedido,
   PatchArticuloLinea,
-  PatchCambiarAgente,
   PatchCantidadLinea,
   PatchClientePedido,
   PatchLinea,
@@ -75,6 +74,11 @@ interface PedidoAPI {
   servido: string;
   email?: string;
   tarjeta_puntos_id?: string;
+  hora?: string;
+  codtienda?: string;
+  codtpv_puntoventa?: string;
+  pagado?: number;
+  pendiente?: number;
 }
 
 const baseUrl = new ApiUrls().PEDIDO;
@@ -141,15 +145,6 @@ export const patchCambiarDescuento = async (id: string, dto_porcentual: number):
       por_descuento: dto_porcentual,
     }
   }, "Error al cambiar descuento del pedido");
-}
-
-export const patchCambiarAgente: PatchCambiarAgente = async (id, cambio) => {
-  await RestAPI.patch(`${baseUrl}/${id}`, {
-    cambios: {
-      agente_id: cambio.agente_id,
-      por_comision: cambio.por_comision,
-    }
-  }, "Error al cambiar agente del pedido");
 }
 
 export const getLineas: GetLineasPedido = async (id) =>
@@ -239,7 +234,6 @@ export const payloadPatchPedido = (pedido: Pedido) => ({
     fecha: pedido.fecha,
     almacen_id: pedido.almacen_id,
     forma_pago_id: pedido.forma_pago_id,
-    observaciones: pedido.observaciones,
   },
 });
 
