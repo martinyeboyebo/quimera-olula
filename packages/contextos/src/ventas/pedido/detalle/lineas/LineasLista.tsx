@@ -11,7 +11,6 @@ import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
 import { TarjetaLinea } from "./TarjetaLinea.tsx";
 
 export type LineasListaProps<L extends Linea = Linea> = {
-  pedidoId?: string;
   lineas: L[];
   seleccionada?: string;
   onCambioCantidad?: (linea: L, cantidad: number) => void;

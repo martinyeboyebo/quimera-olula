@@ -12,9 +12,8 @@ import { QDate } from "@olula/componentes/atomos/qdate.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { TotalDivisaEmpresa } from "#/ventas/venta/vistas/TotalDivisaEmpresa.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { FactoryCtx } from "@olula/lib/factory_ctx.js";
-import { useContext } from "react";
 import { EstadoPedido, Pedido } from "../diseño.ts";
+import { editable } from "./detalle.ts";
 import "./TabDatos.css";
 
 export interface TabDatosProps {
@@ -23,23 +22,13 @@ export interface TabDatosProps {
   publicar?: (evento: string, payload?: unknown) => void;
 }
 
-export const TabDatos = (props: TabDatosProps) => {
-  const { app } = useContext(FactoryCtx);
-  if (!app.Ventas) {
-    return null;
-  }
-  const TabDatos_ = app.Ventas.PedidoTabDatos as typeof TabDatosBase;
-
-  return <TabDatos_ {...props} />;
-};
-
 export const TabDatosBase = ({
   pedido,
   estado,
   publicar = () => {},
 }: TabDatosProps) => {
-  const { uiProps, modelo, editable } = pedido;
-  const mostrarBotonesCambio = estado === "ABIERTO" && editable;
+  const { uiProps, modelo } = pedido;
+  const mostrarBotonesCambio = estado === "ABIERTO" && editable(modelo);
 
   return (
     <div className="TabDatos">

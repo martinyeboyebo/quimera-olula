@@ -8,13 +8,11 @@ export const Lineas = ({
   pedido,
   lineaActiva,
   estadoPedido,
-  pedidoEditable,
   publicar,
 }: {
   pedido: Pedido;
   lineaActiva: LineaPedido | null;
   estadoPedido: string;
-  pedidoEditable: boolean;
   publicar: (evento: string, payload?: unknown) => void;
 }) => {
   const acciones = [
@@ -47,14 +45,15 @@ export const Lineas = ({
     <>
       <LineasLista
         key={pedido.id}
-        pedidoId={pedido.id}
         lineas={pedido.lineas || []}
         seleccionada={lineaActiva?.id}
         onCambioCantidad={handleCambioCantidad}
         divisa={pedido.divisa_id}
-        pedidoEditable={estadoPedido === "ABIERTO" && pedidoEditable}
+        pedidoEditable={estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"}
         acciones={
-          estadoPedido === "ABIERTO" && pedidoEditable ? acciones : undefined
+          estadoPedido === "ABIERTO" && pedido.servido != "TOTAL"
+            ? acciones
+            : undefined
         }
         publicar={publicar}
       />

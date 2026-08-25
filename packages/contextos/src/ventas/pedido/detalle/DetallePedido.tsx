@@ -12,7 +12,6 @@ import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { FactoryCtx } from "@olula/lib/factory_ctx.js";
-import { MetaModelo, modeloEsEditable } from "@olula/lib/dominio.ts";
 import { imprimir_blob } from "@olula/lib/impresion.ts";
 import { useModelo } from "@olula/lib/useModelo.js";
 import { useCallback, useContext, useEffect } from "react";
@@ -20,12 +19,12 @@ import { useNavigate, useParams } from "react-router";
 import { BorrarPedido } from "../borrar/BorrarPedido.tsx";
 import { Pedido } from "../diseño.ts";
 import { getReportPedido } from "../infraestructura.ts";
-import { pedidoVacio } from "./detalle.ts";
+import { editable, metaPedido, pedidoVacio } from "./detalle.ts";
 import "./DetallePedido.css";
 import { Lineas } from "./lineas/Lineas.tsx";
 import { getMaquina } from "./maquina.ts";
 import { TabCliente } from "./TabCliente/TabCliente.tsx";
-import { TabDatos } from "./TabDatos.tsx";
+import { TabDatosBase as TabDatos } from "./TabDatos.tsx";
 import { TabObservaciones } from "./TabObservaciones.tsx";
 
 export type DetallePedidoProps = {
@@ -48,10 +47,6 @@ export const DetallePedidoBase = ({
   id,
   publicar = async () => {},
 }: DetallePedidoProps) => {
-  const { app } = useContext(FactoryCtx);
-  const metaPedido = app.Ventas.metaPedido as MetaModelo<Pedido>;
-  const editable = modeloEsEditable<Pedido>(metaPedido);
-
   const params = useParams();
   const navigate = useNavigate();
   const pedidoId = id ?? params.id;
@@ -178,7 +173,6 @@ export const DetallePedidoBase = ({
         lineaActiva={lineaActiva}
         publicar={emitir}
         estadoPedido={estado}
-        pedidoEditable={esEditable}
       />
 
       {estado === "BORRANDO_PEDIDO" && (

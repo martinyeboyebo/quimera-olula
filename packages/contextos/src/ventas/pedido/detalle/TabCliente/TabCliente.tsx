@@ -5,34 +5,24 @@ import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClient
 import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
-import { FactoryCtx } from "@olula/lib/factory_ctx.js";
-import { useContext } from "react";
 import { Pedido } from "../../diseño.ts";
 import { EstadoPedido } from "../diseño.ts";
+import { editable } from "../detalle.ts";
 import "./TabCliente.css";
 
-export interface TabClienteProps {
+interface TabClienteProps {
   pedido: HookModelo<Pedido>;
   estado: EstadoPedido;
   publicar?: (evento: string, payload?: unknown) => void;
 }
 
-export const TabCliente = (props: TabClienteProps) => {
-  const { app } = useContext(FactoryCtx);
-  if (!app.Ventas) {
-    return null;
-  }
-  const TabCliente_ = app.Ventas.PedidoTabCliente as typeof TabClienteBase;
-
-  return <TabCliente_ {...props} />;
-};
-
-export const TabClienteBase = ({
+export const TabCliente = ({
   pedido,
   estado,
   publicar = async () => {},
 }: TabClienteProps) => {
-  const { modelo, editable: clienteEditable } = pedido;
+  const { modelo } = pedido;
+  const clienteEditable = editable(modelo);
 
   const onGuardarCambioCliente = async (cambios: CambioCliente) => {
     publicar("cambio_cliente_listo", cambios);
