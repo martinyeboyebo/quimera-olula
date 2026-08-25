@@ -1,0 +1,14 @@
+.DetalleLineaExpandido {
+    display: flex;
+    flex-direction: row;
+    gap: var(--espaciado-xs);
+    padding: var(--espaciado-xs) 0;
+
+    .detalle-linea-row {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        gap: var(--espaciado-xl);
+        min-width: 0;
+    }
+}

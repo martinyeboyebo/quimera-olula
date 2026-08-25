@@ -8,9 +8,12 @@ export interface PedidoGan extends Pedido {
   tarjeta_puntos_id?: string;
 }
 
-// Código de barras real de la variante talla+color de la línea (también
-// reenviado tal cual por infraestructura.ts). Se usa para detectar
-// re-escaneos del mismo artículo y sumar cantidad en vez de duplicar línea.
+// Código de barras real de la variante talla+color de la línea, y la
+// propia talla/color (también reenviados tal cual por infraestructura.ts).
+// El barcode se usa para detectar re-escaneos del mismo artículo y sumar
+// cantidad en vez de duplicar línea; talla/color son solo para mostrar.
 export interface LineaPedidoGan extends LineaPedido {
   barcode?: string;
+  talla?: string;
+  color?: string;
 }

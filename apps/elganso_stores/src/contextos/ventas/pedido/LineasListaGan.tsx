@@ -6,7 +6,8 @@ import {
 import { TarjetaLinea } from "#/ventas/pedido/detalle/lineas/TarjetaLinea.tsx";
 import { LineaPedido as Linea } from "#/ventas/pedido/diseño.ts";
 import { LineaPedidoGan } from "./diseño.ts";
-import { metaTablaLineaVentaResumida } from "#/ventas/venta/vistas/metatabla_linea_venta.tsx";
+import { metaTablaLineaVenta } from "#/ventas/venta/vistas/metatabla_linea_venta.tsx";
+import { DetalleLineaExpandidoGan } from "./DetalleLineaExpandidoGan.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.ts";
@@ -64,18 +65,26 @@ export const LineasListaGan = ({
 
   return (
     <ListadoSemiControlado
-      metaTabla={metaTablaLineaVentaResumida<Linea>({
-        divisa,
-        renderCantidad:
-          cantidadEditable && onCambioCantidad
-            ? (linea) => (
-                <EditarCantidadLinea
-                  linea={linea}
-                  onCantidadEditada={onCambioCantidad}
-                />
-              )
-            : undefined,
-      })}
+      metaTabla={{
+        cols: metaTablaLineaVenta<Linea>({
+          divisa,
+          renderCantidad:
+            cantidadEditable && onCambioCantidad
+              ? (linea) => (
+                  <EditarCantidadLinea
+                    linea={linea}
+                    onCantidadEditada={onCambioCantidad}
+                  />
+                )
+              : undefined,
+        }).filter((columna) => columna.prioridad !== "baja"),
+        expansion: ({ entidad }) => (
+          <DetalleLineaExpandidoGan
+            linea={entidad as LineaPedidoGan}
+            divisa={divisa}
+          />
+        ),
+      }}
       tarjeta={(linea) => (
         <TarjetaLinea
           linea={linea}
