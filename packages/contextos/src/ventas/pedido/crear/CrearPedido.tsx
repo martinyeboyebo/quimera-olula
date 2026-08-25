@@ -8,15 +8,29 @@ import {
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
+import { FactoryCtx } from "@olula/lib/factory_ctx.js";
 import { useFocus } from "@olula/lib/useFocus.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { useModelo } from "@olula/lib/useModelo.ts";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import { getPedido, postPedido } from "../infraestructura.ts";
 import "./CrearPedido.css";
 import { metaNuevoPedido, nuevoPedidoVacio } from "./crear.ts";
 
 export const CrearPedido = ({
+  publicar = async () => {},
+}: {
+  publicar?: EmitirEvento;
+}) => {
+  const { app } = useContext(FactoryCtx);
+  if (!app.Ventas) {
+    return null;
+  }
+  const PedidoCrear = app.Ventas.PedidoCrear as typeof CrearPedidoBase;
+  return <PedidoCrear publicar={publicar} />;
+};
+
+export const CrearPedidoBase = ({
   publicar = async () => {},
 }: {
   publicar?: EmitirEvento;

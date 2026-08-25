@@ -1,5 +1,6 @@
 import { menuVentas } from "./menu.ts";
 import { CambiarLineaBase } from "./pedido/cambiar_linea/CambiarLinea.tsx";
+import { CrearPedidoBase } from "./pedido/crear/CrearPedido.tsx";
 import { CrearLineaBase } from "./pedido/crear_linea/CrearLinea.tsx";
 import { metaPedido } from "./pedido/detalle/detalle.ts";
 import { DetallePedidoBase } from "./pedido/detalle/DetallePedido.tsx";
@@ -22,6 +23,7 @@ export class FactoryVentasOlula {
 
     static PedidoTabDatos = PedidoTabDatosBase
     static PedidoTabCliente = PedidoTabClienteBase
+    static PedidoCrear = CrearPedidoBase
     static pedidoDesdeAPI = pedidoDesdeAPI
     static metaTablaPedido = getMetaTablaPedido
     static api_payloadPatchPedido = payloadPatchPedido
