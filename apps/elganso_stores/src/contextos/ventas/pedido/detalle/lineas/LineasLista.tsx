@@ -1,24 +1,33 @@
-import { EditarCantidadLinea } from "#/ventas/pedido/detalle/lineas/EditarCantidadLinea.tsx";
-import {
-  criteriaLineasDefecto,
-  LineasListaProps,
-} from "#/ventas/pedido/detalle/lineas/LineasLista.tsx";
-import { TarjetaLinea } from "#/ventas/pedido/detalle/lineas/TarjetaLinea.tsx";
-import { LineaPedido as Linea } from "#/ventas/pedido/diseño.ts";
-import { LineaPedidoGan } from "./diseño.ts";
 import { metaTablaLineaVenta } from "#/ventas/venta/vistas/metatabla_linea_venta.tsx";
-import { DetalleLineaExpandidoGan } from "./DetalleLineaExpandidoGan.tsx";
-import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
 import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.ts";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
-import { ContextoError } from "@olula/lib/contexto.ts";
+import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { Criteria } from "@olula/lib/diseño.ts";
+import { criteriaDefecto } from "@olula/lib/dominio.js";
+import { ContextoError } from "@olula/lib/contexto.ts";
 import { useContext, useState } from "react";
-import { getArticuloPorBarcode, postLineaGan } from "./infraestructuraGan.ts";
-import "./LineasListaGan.scss";
+import { LineaPedido as Linea } from "../../diseño.ts";
+import { getArticuloPorBarcode } from "../../articulo.ts";
+import { postLineaConBarcode } from "../../infraestructura.ts";
+import { EditarCantidadLinea } from "./EditarCantidadLinea.tsx";
+import { TarjetaLinea } from "./TarjetaLinea.tsx";
+import { DetalleLineaExpandido } from "./DetalleLineaExpandido.tsx";
+import "./LineasLista.scss";
 
-export const LineasListaGan = ({
+export type LineasListaProps<L extends Linea = Linea> = {
+  pedidoId?: string;
+  lineas: L[];
+  seleccionada?: string;
+  onCambioCantidad?: (linea: L, cantidad: number) => void;
+  pedidoEditable?: boolean;
+  cantidadEditable?: boolean;
+  divisa?: string;
+  acciones?: Parameters<typeof QuimeraAcciones>[0]["acciones"];
+  publicar: (evento: string, payload?: unknown) => void;
+};
+
+export const LineasLista = ({
   pedidoId,
   lineas,
   seleccionada,
@@ -38,20 +47,21 @@ export const LineasListaGan = ({
     publicar("linea_seleccionada", linea);
   };
 
+  // Al escanear el mismo código de barras de una línea ya existente, se
+  // suma cantidad en vez de crear otra línea (comparado contra el barcode
+  // ya persistido en cada línea, funciona también tras recargar).
   const escanear = async (valor: string) => {
     const barcode = valor.trim();
     if (!barcode || !pedidoId) return;
 
     await intentar(async () => {
-      const lineaExistente = lineas.find(
-        (linea) => (linea as LineaPedidoGan).barcode === barcode
-      );
+      const lineaExistente = lineas.find((linea) => linea.barcode === barcode);
 
       if (lineaExistente) {
         onCambioCantidad?.(lineaExistente, lineaExistente.cantidad + 1);
       } else {
         const articulo = await getArticuloPorBarcode(barcode);
-        await postLineaGan(pedidoId, {
+        await postLineaConBarcode(pedidoId, {
           articuloId: articulo.referencia,
           barcode,
           cantidad: 1,
@@ -79,10 +89,7 @@ export const LineasListaGan = ({
               : undefined,
         }).filter((columna) => columna.prioridad !== "baja"),
         expansion: ({ entidad }) => (
-          <DetalleLineaExpandidoGan
-            linea={entidad as LineaPedidoGan}
-            divisa={divisa}
-          />
+          <DetalleLineaExpandido linea={entidad} divisa={divisa} />
         ),
       }}
       tarjeta={(linea) => (
@@ -102,7 +109,7 @@ export const LineasListaGan = ({
       onCriteriaChanged={(_: Criteria) => null}
       renderAcciones={() =>
         pedidoEditable ? (
-          <div className="botones maestro-botones LineasListaGan-botones">
+          <div className="botones maestro-botones LineasLista-botones">
             <QInput
               label="Escanear código de barras"
               nombre="escanear_barcode_linea_pedido"
@@ -118,4 +125,9 @@ export const LineasListaGan = ({
       }
     />
   );
+};
+
+export const criteriaLineasDefecto: Criteria = {
+  ...criteriaDefecto,
+  orden: ["linea", "ASC"],
 };

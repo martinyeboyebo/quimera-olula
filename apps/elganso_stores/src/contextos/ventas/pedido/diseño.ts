@@ -1,19 +1,97 @@
-import { LineaPedido, Pedido } from "#/ventas/pedido/diseño.ts";
+import { CambioAgente } from "#/ventas/comun/componentes/moleculas/CambiarAgente/diseño.ts";
+import { Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
+import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
+import { AltaLineaVenta, CambioClienteVenta, ClienteVenta, LineaVenta, NuevaVenta, NuevaVentaClienteNoRegistrado, Venta } from "#/ventas/venta/diseño.ts";
 
-// email/tarjeta_puntos_id llegan igual en la respuesta de la API (infraestructura.ts
-// reenvía la respuesta tal cual), pero no son un concepto genérico de pedido:
-// solo El Ganso los usa (email y tarjeta de fidelización Gansociety de una venta TPV).
-export interface PedidoGan extends Pedido {
-  email?: string;
-  tarjeta_puntos_id?: string;
+// Venta TPV de El Ganso: además de los campos genéricos, trae email y
+// tarjeta de fidelización Gansociety (ver ficha de comanda en Eneboo).
+export interface Pedido extends Venta {
+    cliente: ClienteVenta;
+    servido: string;
+    por_comision: number;
+    fecha_salida: Date | null;
+    almacen_id: string;
+    nombre_almacen: string;
+    lineas: LineaPedido[];
+    email?: string;
+    tarjeta_puntos_id?: string;
 }
 
-// Código de barras real de la variante talla+color de la línea, y la
-// propia talla/color (también reenviados tal cual por infraestructura.ts).
-// El barcode se usa para detectar re-escaneos del mismo artículo y sumar
-// cantidad en vez de duplicar línea; talla/color son solo para mostrar.
-export interface LineaPedidoGan extends LineaPedido {
-  barcode?: string;
-  talla?: string;
-  color?: string;
+// barcode/talla/color: código de barras real de la variante talla+color
+// vendida y sus valores (tabla atributosarticulos). El barcode se usa para
+// detectar re-escaneos del mismo artículo y sumar cantidad en vez de crear
+// otra línea; talla/color son solo para mostrar.
+export interface LineaPedido extends LineaVenta {
+    otro_campo?: string;
+    barcode?: string;
+    talla?: string;
+    color?: string;
 }
+
+export interface CambiosLineaPedido {
+    descripcion: string,
+    cantidad: number,
+    pvp_unitario: number,
+    dto_porcentual: number,
+    dto_lineal: number,
+    grupo_iva_producto_id: string,
+    iva_incluido: boolean,
+    tipo_irpf: number,
+    por_comision: number,
+}
+
+export type NuevoPedido = NuevaVenta
+
+export type NuevoPedidoClienteNoRegistrado = NuevaVentaClienteNoRegistrado
+
+export type CambioClientePedido = CambioClienteVenta
+
+export type NuevaLineaPedido = AltaLineaVenta;
+
+export type GetPedidos = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<Pedido>;
+
+export type GetPedido = (id: string) => Promise<Pedido>;
+
+export type GetLineasPedido = (id: string) => Promise<LineaPedido[]>;
+
+export type PostPedido = (pedido: NuevoPedido | NuevoPedidoClienteNoRegistrado) => Promise<string>;
+
+export type PostLinea = (id: string, linea: NuevaLineaPedido) => Promise<string>;
+
+export type PatchClientePedido = (id: string, cambio: CambioClientePedido) => Promise<void>;
+
+export type PatchLinea = (id: string, linea: LineaPedido) => Promise<void>;
+
+export type PatchArticuloLinea = (id: string, lineaId: string, referencia: string) => Promise<void>;
+
+export type PatchCantidadLinea = (id: string, linea: LineaPedido, cantidad: number) => Promise<void>;
+
+export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
+
+export type PatchCambiarAgente = (id: string, cambio: CambioAgente) => Promise<void>;
+
+export type EstadoPedido = (
+    'INICIAL' | 'ABIERTO' | 'SERVIDO'
+    | 'BORRANDO_PEDIDO'
+    | 'CAMBIANDO_CLIENTE'
+    | 'CAMBIANDO_DESCUENTO'
+    | 'CAMBIANDO_AGENTE'
+    | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
+);
+
+export type EstadoMaestroPedido = (
+    'INICIAL' | 'CREANDO_PEDIDO'
+);
+
+export type ContextoPedido<T extends Pedido = Pedido> = {
+    estado: EstadoPedido;
+    pedido: T;
+    pedidoInicial: T;
+    lineaActiva: LineaPedido | null;
+};
+
+export type ContextoMaestroPedido = {
+    estado: EstadoMaestroPedido;
+    pedidos: ListaActivaEntidades<Pedido>;
+    seleccionados: string[];
+};

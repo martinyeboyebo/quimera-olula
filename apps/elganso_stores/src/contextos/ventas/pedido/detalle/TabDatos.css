@@ -1,0 +1,66 @@
+/*
+ * TabDatos.css — posicionado de campos de la pestaña Datos del pedido.
+ * Grid de 12 columnas (quimera-formulario). El Ganso no tiene fecha de
+ * salida, divisa ni % comisión de cabecera (venta TPV en EUR, comisión de
+ * línea): fila 1: fecha (3) + almacen_id (9); fila 2: agente_id (11) +
+ * icono cambiar agente (1); fila 3: forma_pago_id (12).
+ */
+.Pedido .TabDatos {
+    quimera-date[nombre="fecha"] {
+        grid-column: 1 / span 3;
+    }
+
+    quimera-select[nombre="almacen_id"] {
+        grid-column: span 9;
+    }
+
+    quimera-autocompletar[nombre="agente_id"] {
+        grid-column: 1 / span 11;
+        min-width: 0;
+    }
+
+    .TabDatos-accion {
+        display: flex;
+        justify-content: flex-end;
+        align-items: end;
+        margin: 0;
+        min-width: 0;
+    }
+
+    .TabDatos-accion--agente {
+        grid-column: 12 / span 1;
+    }
+
+    quimera-select[nombre="forma_pago_id"] {
+        grid-column: 1 / span 12;
+    }
+}
+
+@media (max-width: 768px) {
+    .Pedido .TabDatos quimera-formulario:has(.TabDatos-accion) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 2.5rem;
+    }
+
+    .Pedido .TabDatos quimera-formulario {
+        quimera-date[nombre="fecha"] {
+            grid-column: 1 / -1 !important;
+        }
+
+        quimera-select[nombre="almacen_id"] {
+            grid-column: 1 / -1 !important;
+        }
+
+        quimera-autocompletar[nombre="agente_id"] {
+            grid-column: 1 / span 2 !important;
+        }
+
+        quimera-select[nombre="forma_pago_id"] {
+            grid-column: 1 / -1 !important;
+        }
+
+        .TabDatos-accion {
+            grid-column: 3 / span 1 !important;
+            justify-content: flex-end;
+        }
+    }
+}

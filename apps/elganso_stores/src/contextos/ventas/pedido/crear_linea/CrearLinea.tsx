@@ -6,13 +6,11 @@ import { QModal } from "@olula/componentes/index.js";
 import { useForm } from "@olula/lib/useForm.js";
 import { ProcesarEvento } from "@olula/lib/useMaquina.js";
 import { useCallback, useEffect, useState } from "react";
-import {
-  getTallasArticulo,
-  postLineaGan,
-  TallaArticulo,
-} from "./infraestructuraGan.ts";
+import { getTallasArticulo, TallaArticulo } from "../articulo.ts";
+import { postLineaConBarcode } from "../infraestructura.ts";
+import "./CrearLinea.css";
 
-export type CrearLineaGanProps = {
+export type CrearLineaProps = {
   pedidoId: string;
   publicar: ProcesarEvento;
 };
@@ -21,7 +19,7 @@ export type CrearLineaGanProps = {
 // (tabla atributosarticulos): tras elegir el artículo hace falta elegir
 // también la talla, salvo que el artículo no tenga variantes (entonces se
 // usa el código de barras del propio artículo).
-export const CrearLineaGan = ({ pedidoId, publicar }: CrearLineaGanProps) => {
+export const CrearLinea = ({ pedidoId, publicar }: CrearLineaProps) => {
   const [referencia, setReferencia] = useState<string | null>(null);
   const [descripcionArticulo, setDescripcionArticulo] = useState<string | null>(null);
   const [cantidad, setCantidad] = useState("1");
@@ -50,7 +48,7 @@ export const CrearLineaGan = ({ pedidoId, publicar }: CrearLineaGanProps) => {
     !!referencia && Number(cantidad) > 0 && (tallas.length === 0 || !!tallaElegida);
 
   const crear_ = useCallback(async () => {
-    await postLineaGan(pedidoId, {
+    await postLineaConBarcode(pedidoId, {
       articuloId: referencia!,
       barcode,
       cantidad: Number(cantidad),

@@ -1,20 +1,9 @@
 import { FactoryVentasOlula } from "#/ventas/factory.ts";
 import { menuVentas } from "./menu.ts";
-import { configEstadoPedidoGan } from "./pedido/configEstadoGan.tsx";
-import { CrearLineaGan } from "./pedido/CrearLineaGan.tsx";
-import { CrearPedidoGan } from "./pedido/CrearPedidoGan.tsx";
-import { metaPedidoGan } from "./pedido/dominio.ts";
-import { LineasListaGan } from "./pedido/LineasListaGan.tsx";
-import { TabDatosGan } from "./pedido/TabDatosGan.tsx";
-import { TabClienteGan } from "./pedido/TabClienteGan.tsx";
 
+// El módulo de pedido ya no pasa por esta fábrica (ver
+// apps/elganso_stores/src/router_factory.ts): tiene su propio componente
+// completo en contextos/ventas/pedido/, sin slots inyectados.
 export class FactoryVentasGanso extends FactoryVentasOlula {
     static menu = menuVentas;
-    static metaPedido = metaPedidoGan;
-    static pedido_maestro_configEstado = configEstadoPedidoGan;
-    static PedidoTabDatos = TabDatosGan;
-    static PedidoTabCliente = TabClienteGan;
-    static PedidoCrear = CrearPedidoGan;
-    static pedido_CrearLinea = CrearLineaGan;
-    static pedido_detalle_lineas_LineasLista = LineasListaGan;
 }

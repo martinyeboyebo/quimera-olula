@@ -1,5 +1,5 @@
-import { NuevoPedidoClienteNoRegistrado } from "#/ventas/pedido/diseño.ts";
-import { getPedido, postPedido } from "#/ventas/pedido/infraestructura.ts";
+import { NuevoPedidoClienteNoRegistrado } from "../diseño.ts";
+import { getPedido, postPedido } from "../infraestructura.ts";
 import { nuevaVentaClienteNoRegistradaVacia } from "#/ventas/venta/dominio.ts";
 import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
@@ -17,7 +17,7 @@ const VENTA_PDA: NuevoPedidoClienteNoRegistrado = {
   ciudad: "-",
 };
 
-export const CrearPedidoGan = ({
+export const CrearPedido = ({
   publicar = async () => {},
 }: {
   publicar?: EmitirEvento;

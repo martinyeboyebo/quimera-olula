@@ -3,18 +3,16 @@ import {
   fiscalidadLineaVenta,
 } from "#/ventas/comun/componentes/linea_venta_texto.ts";
 import "./DetalleLineaExpandido.scss";
-import { LineaPedidoGan } from "./diseño.ts";
+import { LineaPedido } from "../../diseño.ts";
 
-// El barcode no cabe bien como columna más en la tabla (ya tiene muchos
-// datos): se añade al desplegable de detalle que ya existe, junto al
-// desglose e impuestos. Se replica el contenedor de DetalleLineaExpandido
-// (mismas clases/CSS compartidos) en vez de anidarlo, porque su CSS solo
-// da estilo a los campos que están directamente dentro de su propio div.
-export const DetalleLineaExpandidoGan = ({
+// El barcode/talla/color no caben bien como columnas más en la tabla (ya
+// tiene muchos datos): se muestran en el desplegable de detalle, junto al
+// desglose e impuestos.
+export const DetalleLineaExpandido = ({
   linea,
   divisa,
 }: {
-  linea: LineaPedidoGan;
+  linea: LineaPedido;
   divisa?: string;
 }) => {
   const desglose = desgloseLineaVenta(linea, divisa);

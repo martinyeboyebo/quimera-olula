@@ -3,12 +3,20 @@ import { Agente } from "#/ventas/comun/componentes/agente.tsx";
 import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
 import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { QDate } from "@olula/componentes/atomos/qdate.tsx";
-import { TabDatosProps } from "#/ventas/pedido/detalle/TabDatos.tsx";
+import { HookModelo } from "@olula/lib/useModelo.ts";
+import { EstadoPedido, Pedido } from "../diseño.ts";
+import "./TabDatos.css";
 
-// En El Ganso (venta TPV) no existen fecha de salida, divisa (siempre EUR) ni
-// comisión de agente de cabecera — son campos del modelo genérico de pedido
-// sin equivalente real en tpv_comandas (confirmado contra el ERP legacy).
-export const TabDatosGan = ({
+export interface TabDatosProps {
+  pedido: HookModelo<Pedido>;
+  estado?: EstadoPedido;
+  publicar?: (evento: string, payload?: unknown) => void;
+}
+
+// En El Ganso (venta TPV) no existen fecha de salida, divisa (siempre EUR)
+// ni comisión de agente de cabecera — son campos del modelo genérico de
+// pedido sin equivalente real en tpv_comandas (confirmado contra Eneboo).
+export const TabDatos = ({
   pedido,
   estado,
   publicar = () => {},

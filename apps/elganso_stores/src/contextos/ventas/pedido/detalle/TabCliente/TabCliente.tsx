@@ -4,19 +4,26 @@ import { BotonCambiar } from "#/ventas/comun/componentes/BotonCambiar.tsx";
 import { CambioClienteVenta } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/CambioClienteVenta.tsx";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
-import { TabClienteProps } from "#/ventas/pedido/detalle/TabCliente/TabCliente.tsx";
-import { PedidoGan } from "./diseño.ts";
+import { HookModelo } from "@olula/lib/useModelo.ts";
+import { Pedido } from "../../diseño.ts";
+import { EstadoPedido } from "../diseño.ts";
+import "./TabCliente.css";
+
+export interface TabClienteProps {
+  pedido: HookModelo<Pedido>;
+  estado: EstadoPedido;
+  publicar?: (evento: string, payload?: unknown) => void;
+}
 
 // Además del cliente/dirección genéricos, una venta TPV de El Ganso trae
 // email, teléfono y tarjeta de fidelización Gansociety (tal como se ve en
 // la ficha de la comanda en Eneboo).
-export const TabClienteGan = ({
+export const TabCliente = ({
   pedido,
   estado,
   publicar = async () => {},
 }: TabClienteProps) => {
-  const { modelo: modeloBase, editable: clienteEditable } = pedido;
-  const modelo = modeloBase as PedidoGan;
+  const { modelo, editable: clienteEditable } = pedido;
 
   const onGuardarCambioCliente = async (cambios: CambioCliente) => {
     publicar("cambio_cliente_listo", cambios);
