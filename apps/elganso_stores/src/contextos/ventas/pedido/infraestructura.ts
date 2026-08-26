@@ -257,3 +257,25 @@ export const patchPedido = async (id: string, pedido: Pedido) => {
 export const borrarPedido = async (id: string) => {
   await RestAPI.delete(`${baseUrl}/${id}`, "Error al borrar pedido");
 }
+
+export interface TarjetaPuntos {
+  codtarjetapuntos: string;
+  nombre: string;
+  email: string;
+  telefono: string;
+  saldopuntos: number;
+}
+
+// La tarjeta Gansociety se busca por email o por teléfono (igual que en
+// Eneboo, las dos únicas opciones que ofrece).
+export const buscarTarjetasPuntos = async (
+  criterio: { email?: string; telefono?: string }
+): Promise<TarjetaPuntos[]> => {
+  const q = new URLSearchParams();
+  if (criterio.email) q.set("email", criterio.email);
+  if (criterio.telefono) q.set("telefono", criterio.telefono);
+
+  return await RestAPI.get<{ datos: TarjetaPuntos[] }>(
+    `/ventas/tarjetapuntos?${q.toString()}`
+  ).then((respuesta) => respuesta.datos);
+}
