@@ -1,0 +1,7 @@
+// TabPagos.scss — posicionado de campos de la pestaña Pagos del pedido.
+// Grid de 12 columnas (quimera-formulario). Por ahora solo forma de pago.
+.Pedido .TabPagos {
+  quimera-select[nombre="forma_pago_id"] {
+    grid-column: 1 / span 12;
+  }
+}

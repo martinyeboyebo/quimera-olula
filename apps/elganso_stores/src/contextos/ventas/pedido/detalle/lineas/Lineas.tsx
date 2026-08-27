@@ -4,6 +4,7 @@ import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
 import { LineaPedido, Pedido } from "../../diseño.ts";
 import { CambiarLinea } from "../../cambiar_linea/CambiarLinea.tsx";
 import { LineasLista } from "./LineasLista.tsx";
+import "./Lineas.scss";
 
 export const Lineas = ({
   pedido,
@@ -46,6 +47,8 @@ export const Lineas = ({
 
   return (
     <>
+      <h3 className="Lineas-titulo">Líneas de venta</h3>
+
       <LineasLista
         key={pedido.id}
         pedidoId={pedido.id}

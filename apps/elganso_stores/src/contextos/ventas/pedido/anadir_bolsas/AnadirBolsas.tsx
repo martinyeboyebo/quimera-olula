@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getArticuloPorBarcode } from "../articulo.ts";
 import { LineaPedido } from "../diseño.ts";
 import { patchCantidadLinea, postLineaConBarcode } from "../infraestructura.ts";
-import "./AnadirBolsas.css";
+import "./AnadirBolsas.scss";
 
 export type AnadirBolsasProps = {
   pedidoId: string;

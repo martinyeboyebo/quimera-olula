@@ -66,6 +66,8 @@ export const CrearLinea = ({ pedidoId, publicar }: CrearLineaProps) => {
       nombre="crear_linea_pedido"
       titulo="Crear línea"
       onCerrar={cancelar}
+      anchoEstable
+      pantallaCompletaMovil={false}
     >
       <div className="CrearLinea">
         <quimera-formulario>

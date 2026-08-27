@@ -9,6 +9,7 @@ import {
 } from "#/ventas/venta/dominio.ts";
 import { Pedido } from "../diseño.ts";
 import "#/ventas/venta/vistas/TotalesVenta.css";
+import "./TotalesPedido.scss";
 
 interface TotalesPedidoProps {
   modeloVenta: HookModelo<Pedido>;

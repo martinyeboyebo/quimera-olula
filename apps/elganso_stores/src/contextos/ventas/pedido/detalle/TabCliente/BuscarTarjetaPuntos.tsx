@@ -2,7 +2,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { QInput } from "@olula/componentes/atomos/qinput.tsx";
 import { useState } from "react";
 import { buscarTarjetasPuntos, TarjetaPuntos } from "../../infraestructura.ts";
-import "./BuscarTarjetaPuntos.css";
+import "./BuscarTarjetaPuntos.scss";
 
 export interface BuscarTarjetaPuntosProps {
   onSeleccionar: (tarjeta: TarjetaPuntos) => void;

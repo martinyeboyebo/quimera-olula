@@ -1,7 +1,7 @@
 import { FormaPago } from "#/ventas/comun/componentes/formapago.tsx";
 import { HookModelo } from "@olula/lib/useModelo.ts";
 import { Pedido } from "../diseño.ts";
-import "./TabPagos.css";
+import "./TabPagos.scss";
 
 export interface TabPagosProps {
   pedido: HookModelo<Pedido>;
