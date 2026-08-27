@@ -49,6 +49,8 @@ export const CambiarLinea = ({
             nombre="editar_linea_pedido"
             titulo="Editar línea"
             onCerrar={cancelar}
+            anchoEstable
+            pantallaCompletaMovil={false}
         >
         <div className="EditarLinea">
             <quimera-formulario>

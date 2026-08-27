@@ -1,6 +1,6 @@
 import { TipoArticuloLinea } from "#/ventas/venta/diseño.ts";
 import { MetaModelo } from "@olula/lib/dominio.js";
-import { getTipoArticulo, metaLineaVenta } from "#/ventas/venta/dominio.ts";
+import { metaLineaVenta } from "#/ventas/venta/dominio.ts";
 import { LineaPedido } from "../diseño.ts";
 
 /**
@@ -14,10 +14,15 @@ export interface ModeloCambiarLinea extends LineaPedido {
     tipoArticulo: TipoArticuloLinea;
 }
 
+// El Ganso nunca manda "descripcion_articulo" real desde el backend (siempre
+// null en tpv_lineascomanda), así que getTipoArticulo() del genérico
+// clasificaría todas las líneas como "generico" (abriría el lápiz de
+// "Descripción personalizada" solo). Se arranca siempre en "registrado": el
+// lápiz se abre solo si el usuario lo pide.
 export const getModeloInicial = (linea: LineaPedido): ModeloCambiarLinea => {
     return {
         ...linea,
-        tipoArticulo: getTipoArticulo(linea),
+        tipoArticulo: "registrado",
     };
 }
 
