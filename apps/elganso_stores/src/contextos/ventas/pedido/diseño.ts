@@ -77,6 +77,7 @@ export type EstadoPedido = (
     | 'BORRANDO_PEDIDO'
     | 'CAMBIANDO_DESCUENTO'
     | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
+    | 'AÑADIENDO_BOLSAS'
 );
 
 export type EstadoMaestroPedido = (

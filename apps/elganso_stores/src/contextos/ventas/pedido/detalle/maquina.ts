@@ -44,6 +44,8 @@ export const getMaquina = (): Maquina<EstadoPedido, ContextoPedido> => {
 
             borrar_solicitado: "BORRANDO_PEDIDO",
 
+            bolsas_solicitadas: "AÑADIENDO_BOLSAS",
+
             cambio_cliente_listo: [cambiarCliente],
 
             datos_cliente_listo: [cambiarDatosCliente],
@@ -101,6 +103,13 @@ export const getMaquina = (): Maquina<EstadoPedido, ContextoPedido> => {
             alta_linea_lista: [crearLinea],
 
             crear_linea_cancelado: "ABIERTO",
+        },
+
+        AÑADIENDO_BOLSAS: {
+
+            alta_linea_lista: [crearLinea],
+
+            bolsas_cancelado: "ABIERTO",
         },
 
         CAMBIANDO_LINEA: {

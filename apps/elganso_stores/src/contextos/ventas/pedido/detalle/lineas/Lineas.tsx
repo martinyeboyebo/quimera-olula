@@ -1,3 +1,4 @@
+import { AnadirBolsas } from "../../anadir_bolsas/AnadirBolsas.tsx";
 import { BorrarLinea } from "../../borrar_linea/BorrarLinea.tsx";
 import { CrearLinea } from "../../crear_linea/CrearLinea.tsx";
 import { LineaPedido, Pedido } from "../../diseño.ts";
@@ -61,6 +62,10 @@ export const Lineas = ({
 
       {estadoPedido === "CREANDO_LINEA" && (
         <CrearLinea pedidoId={pedido.id} publicar={publicar} />
+      )}
+
+      {estadoPedido === "AÑADIENDO_BOLSAS" && (
+        <AnadirBolsas pedidoId={pedido.id} lineas={pedido.lineas || []} publicar={publicar} />
       )}
 
       {lineaActiva && estadoPedido === "CAMBIANDO_LINEA" && (

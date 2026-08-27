@@ -66,6 +66,11 @@ export const DetallePedido = ({
 
   const acciones = [
     {
+      texto: "Pago",
+      onClick: () => emitir("bolsas_solicitadas"),
+      deshabilitado: !esEditable,
+    },
+    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,

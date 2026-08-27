@@ -16,6 +16,7 @@ export type ArticuloPorBarcodeApi = {
   referencia: string;
   descripcion: string;
   talla: string;
+  pvp: number;
 };
 
 export const getTallasArticulo = (referencia: string) =>
