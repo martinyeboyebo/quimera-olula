@@ -1,0 +1,44 @@
+// El input de escaneo (con etiqueta encima) es más alto que los botones
+// Nueva/Editar/Borrar: se centran verticalmente para que no queden pegados
+// arriba dentro de la misma fila.
+.LineasLista-botones {
+  quimera-acciones {
+    .acciones.acciones-inline {
+      quimera-boton {
+        margin: auto 5px;
+      }
+    }
+  }
+}
+
+// En móvil, el input de escaneo + los botones (Nueva/Editar/Borrar) no caben
+// en una sola fila (".botones" no hace wrap por defecto) y se salen de la
+// pantalla: se envuelven en varias líneas, y los botones se reparten todo el
+// ancho a partes iguales (antes quedaban apiñados a la derecha, muy
+// pequeños en comparación con el input de escaneo).
+@media (max-width: 768px) {
+  .LineasLista-botones {
+    flex-wrap: wrap;
+
+    quimera-input {
+      flex: 1 1 100%;
+    }
+
+    quimera-acciones {
+      flex: 1 1 100%;
+
+      .acciones.acciones-inline {
+        width: 100%;
+        justify-content: stretch;
+
+        quimera-boton {
+          flex: 1;
+
+          button {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,15 +2,15 @@ import { RouterFactoryVentasOlula } from "#/ventas/router_factory.ts";
 import { crearRouter } from "@olula/lib/router.ts";
 import { RouteObject } from "react-router";
 import { RouterFactoryAuthOlula } from "./contextos/auth/router.ts";
-import { MaestroConDetallePedido } from "./contextos/ventas/pedido/maestro/MaestroConDetallePedido.tsx";
+import { MaestroConDetalleVentaTpv } from "./contextos/tpv/venta/maestro/MaestroConDetalleVentaTpv.tsx";
 
-// "ventas/pedido" ya no es el módulo genérico: El Ganso tiene su propio
-// módulo completo de pedido (venta TPV), sin pasar por la fábrica de
-// packages/contextos.
+// "tpv/venta" no es el módulo genérico de packages/contextos: El Ganso
+// tiene su propio módulo completo de venta TPV (antes vivía en
+// "ventas/pedido", migrado por completo — ver ARQUITECTURA_GMIXTO.md).
 export class RouterFactoryVentasGanso extends RouterFactoryVentasOlula {
     static router = {
         ...RouterFactoryVentasOlula.router,
-        "ventas/pedido": MaestroConDetallePedido,
+        "tpv/venta": MaestroConDetalleVentaTpv,
     }
 }
 

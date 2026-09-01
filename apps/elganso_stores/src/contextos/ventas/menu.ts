@@ -22,8 +22,8 @@ export const menuVentas = {
     // ********** Sección Pedidos **********
     "Pedidos": { icono: "tienda", posicion: 3 },
     "Pedidos/Listado de Pedidos": {
-        url: "/ventas/pedido",
-        regla: "ventas.pedido.leer",
+        url: "/tpv/venta",
+        regla: "tpv.venta.leer",
         icono: "fichero",
     },
     "Pedidos/Preparación Pedidos Web": {
