@@ -4,6 +4,7 @@ import { QBoton } from "@olula/componentes/atomos/qboton.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { useForm } from "@olula/lib/useForm.js";
 import { useCallback } from "react";
+import "./CrearVentaTpv.css";
 
 // En El Ganso una venta TPV no lleva cliente real: se crea siempre con este
 // cliente de paso fijo, sin preguntar nada al usuario. El endpoint de alta
@@ -36,11 +37,16 @@ export const CrearVentaTpv = ({
   const [guardar, cancelar] = useForm(guardar_, cancelar_);
 
   return (
-    <div className="botones">
-      <QBoton onClick={guardar}>Guardar</QBoton>
-      <QBoton onClick={cancelar} variante="texto">
-        Cancelar
-      </QBoton>
+    <div className="CrearVentaTpv">
+      <p className="CrearVentaTpv-texto">
+        Vas a crear un nuevo pedido, ¿deseas continuar?
+      </p>
+      <div className="botones">
+        <QBoton onClick={guardar}>Guardar</QBoton>
+        <QBoton onClick={cancelar} variante="texto">
+          Cancelar
+        </QBoton>
+      </div>
     </div>
   );
 };
