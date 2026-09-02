@@ -30,8 +30,4 @@ export const menuVentas = {
         url: "/pedidos_web",
         icono: "bolsa",
     },
-    "Pedidos/Nuevo Pedido": {
-        url: "/new_pedido",
-        icono: "carrito",
-    },
 };
