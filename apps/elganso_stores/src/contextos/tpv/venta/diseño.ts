@@ -1,5 +1,6 @@
 import { Direccion, Filtro, Orden, Paginacion, RespuestaLista } from "@olula/lib/diseño.ts";
 import { ListaActivaEntidades } from "@olula/lib/ListaActivaEntidades.js";
+import { ListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { LineaVenta, Venta } from "#/ventas/venta/diseño.ts";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
 
@@ -52,6 +53,28 @@ export type NuevaVentaTpv = {
     punto_venta_id: string;
 };
 
+// Pago real de la venta (efectivo/tarjeta) — vale/saldoVale se tipan por si
+// hay pagos históricos sincronizados con vale, aunque esta fase no crea
+// pagos con vale desde la UI (ver PendienteVenta).
+export interface PagoVentaTpv {
+    id: string;
+    importe: number;
+    formaPago: string;
+    fecha: Date;
+    idArqueo: string;
+    arqueoAbierto: boolean;
+    idTipoTarjeta: string | null;
+    vale?: string | null;
+    saldoVale?: number | null;
+    [key: string]: unknown;
+}
+
+export type NuevoPagoVentaTpv = {
+    importe: number;
+    formaPago: 'EFECTIVO' | 'TARJETA';
+    idTipoTarjeta?: string | null;
+};
+
 export type GetVentasTpv = (filtro: Filtro, orden: Orden, paginacion: Paginacion) => RespuestaLista<VentaTpv>;
 
 export type GetVentaTpv = (id: string) => Promise<VentaTpv>;
@@ -68,12 +91,19 @@ export type PatchCantidadLinea = (id: string, linea: LineaVentaTpv, cantidad: nu
 
 export type DeleteLinea = (id: string, lineaId: string) => Promise<void>;
 
+export type PostPago = (id: string, pago: NuevoPagoVentaTpv) => Promise<string>;
+
+export type DeletePago = (id: string, idPago: string) => Promise<void>;
+
+export type GetPagosVentaTpv = (id: string) => Promise<PagoVentaTpv[]>;
+
 export type EstadoVentaTpv = (
     'INICIAL' | 'ABIERTO' | 'SERVIDO'
     | 'BORRANDO_VENTA'
     | 'CAMBIANDO_DESCUENTO'
     | 'CREANDO_LINEA' | 'BORRANDO_LINEA' | 'CAMBIANDO_LINEA'
     | 'AÑADIENDO_BOLSAS'
+    | 'PAGANDO_EN_EFECTIVO' | 'PAGANDO_CON_TARJETA' | 'BORRANDO_PAGO'
 );
 
 export type EstadoMaestroVentaTpv = (
@@ -85,6 +115,7 @@ export type ContextoVentaTpv<T extends VentaTpv = VentaTpv> = {
     venta: T;
     ventaInicial: T;
     lineaActiva: LineaVentaTpv | null;
+    pagos: ListaEntidades<PagoVentaTpv>;
 };
 
 export type ContextoMaestroVentaTpv = {

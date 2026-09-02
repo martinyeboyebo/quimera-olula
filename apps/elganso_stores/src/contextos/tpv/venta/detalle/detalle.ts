@@ -1,14 +1,17 @@
 import { metaVenta, ventaVacia } from "#/ventas/venta/dominio.ts";
 import { ProcesarContexto } from "@olula/lib/diseño.js";
 import { ejecutarListaProcesos, MetaCampo, MetaModelo, modeloEsEditable, publicar } from "@olula/lib/dominio.ts";
+import { accionesListaEntidades, listaEntidadesInicial, ProcesarListaEntidades } from "@olula/lib/ListaEntidades.js";
 import { CambioCliente } from "#/ventas/comun/componentes/moleculas/CambioClienteVenta/diseño.ts";
 import {
     CambiosDatosCliente,
     LineaVentaTpv,
+    PagoVentaTpv,
     VentaTpv
 } from "../diseño.ts";
 import {
     getLineas,
+    getPagos,
     getVenta,
     patchCambiarCliente,
     patchCambiarDescuento,
@@ -16,6 +19,11 @@ import {
     patchDatosCliente,
 } from "../infraestructura.ts";
 import { ContextoVentaTpv, EstadoVentaTpv } from "./diseño.ts";
+
+const conPagos = (fn: ProcesarListaEntidades<PagoVentaTpv>) =>
+    (ctx: ContextoVentaTpv<VentaTpv>) => ({ ...ctx, pagos: fn(ctx.pagos) });
+
+export const Pagos = accionesListaEntidades(conPagos);
 
 export const ventaTpvVacia = (): VentaTpv => ({
     ...ventaVacia,
@@ -123,12 +131,18 @@ const activarLineaPorIndice = (indice: number) => async (contexto: ContextoVenta
     }
 }
 
+export const refrescarPagos: ProcesarVentaTpv = async (contexto) => {
+    const pagos = await getPagos(contexto.venta.id);
+    return Pagos.recargar(contexto, { datos: pagos, total: pagos.length });
+}
+
 export const getContextoVacio: ProcesarVentaTpv = async (contexto) => {
     return {
         ...contexto,
         estado: 'INICIAL',
         venta: ventaTpvVaciaContexto(),
-        lineaActiva: null
+        lineaActiva: null,
+        pagos: listaEntidadesInicial<PagoVentaTpv>(),
     }
 }
 
@@ -140,6 +154,7 @@ export const cargarContexto: ProcesarVentaTpv = async (contexto, payload) => {
             [
                 cargarVenta(idVenta),
                 refrescarLineas,
+                refrescarPagos,
                 abiertaOCerrada,
                 activarLineaPorIndice(0),
             ],
@@ -225,6 +240,7 @@ export const cambiarCantidadLinea: ProcesarVentaTpv = async (contexto, payload) 
         },
         ventaInicial: contexto.ventaInicial,
         lineaActiva: lineasActualizadas.find(l => l.id === lineaId) || null,
+        pagos: contexto.pagos,
     };
 }
 
@@ -236,6 +252,32 @@ export const borrarLinea: ProcesarVentaTpv = async (contexto, payload) => {
         refrescarVenta,
         refrescarLineas,
         activarLineaPorIndice(indiceLineaActiva),
+        'ABIERTO',
+    ]);
+}
+
+// El propio modal (PagarEfectivoVentaTpv/PagarTarjetaVentaTpv) llama a
+// postPago y solo emite "pago_..._hecho" tras el éxito — aquí solo se
+// refresca, para no duplicar el pago si este processor volviera a llamar
+// a la API.
+export const pagoHecho: ProcesarVentaTpv = async (contexto) => {
+    return pipeVentaTpv(contexto, [
+        refrescarVenta,
+        refrescarLineas,
+        refrescarPagos,
+        'ABIERTO',
+    ]);
+}
+
+// El propio modal (BorrarPagoVentaTpv) ya llama a deletePago antes de
+// emitir "pago_borrado" — aquí solo se actualiza el contexto local.
+export const borrarPago: ProcesarVentaTpv = async (contexto, payload) => {
+    const idPago = payload as string;
+
+    return pipeVentaTpv(contexto, [
+        (ctx) => Pagos.quitar(ctx, idPago),
+        refrescarVenta,
+        refrescarLineas,
         'ABIERTO',
     ]);
 }

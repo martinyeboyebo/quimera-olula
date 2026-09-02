@@ -5,6 +5,7 @@ import {
     abiertaOCerrada,
     activarLinea,
     borrarLinea,
+    borrarPago,
     borrarVenta,
     cambiarCantidadLinea,
     cambiarCliente,
@@ -14,6 +15,8 @@ import {
     cargarContexto,
     crearLinea,
     getContextoVacio,
+    Pagos,
+    pagoHecho,
     refrescarVenta
 } from "./detalle.ts";
 
@@ -43,6 +46,14 @@ export const getMaquina = (): Maquina<EstadoVentaTpv, ContextoVentaTpv> => {
             borrar_solicitado: "BORRANDO_VENTA",
 
             bolsas_solicitadas: "AÑADIENDO_BOLSAS",
+
+            pago_efectivo_solicitado: "PAGANDO_EN_EFECTIVO",
+
+            pago_tarjeta_solicitado: "PAGANDO_CON_TARJETA",
+
+            borrar_pago_solicitado: "BORRANDO_PAGO",
+
+            pago_seleccionado: [Pagos.activar],
 
             cambio_cliente_listo: [cambiarCliente],
 
@@ -118,6 +129,27 @@ export const getMaquina = (): Maquina<EstadoVentaTpv, ContextoVentaTpv> => {
             linea_borrada: borrarLinea,
 
             borrar_linea_cancelado: "ABIERTO",
+        },
+
+        PAGANDO_EN_EFECTIVO: {
+
+            pago_en_efectivo_hecho: [pagoHecho],
+
+            pago_cancelado: "ABIERTO",
+        },
+
+        PAGANDO_CON_TARJETA: {
+
+            pago_con_tarjeta_hecho: [pagoHecho],
+
+            pago_cancelado: "ABIERTO",
+        },
+
+        BORRANDO_PAGO: {
+
+            pago_borrado: [borrarPago],
+
+            borrado_de_pago_cancelado: "ABIERTO",
         },
 
     }

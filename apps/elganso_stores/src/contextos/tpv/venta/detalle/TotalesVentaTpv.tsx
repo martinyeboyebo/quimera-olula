@@ -16,10 +16,8 @@ interface TotalesVentaTpvProps {
   publicar: EmitirEvento;
 }
 
-// Réplica local de TotalesVenta (core) con Pagado/Pendiente añadidos en la
-// misma caja: son datos propios de tpv_comandas, ya calculados por Eneboo,
-// sin equivalente en el TotalesVenta genérico — y el usuario los quiere en
-// la misma línea de totales, no en un bloque aparte.
+// Réplica local de TotalesVenta (core): Pagado/Pendiente se muestran en
+// PendienteVenta, junto a los botones de pago, no aquí.
 export const TotalesVentaTpv = ({ modeloVenta, publicar }: TotalesVentaTpvProps) => {
   const venta = modeloVenta.modelo;
   const pluginDtoCabeceraVentaActivo =
@@ -81,14 +79,6 @@ export const TotalesVentaTpv = ({ modeloVenta, publicar }: TotalesVentaTpvProps)
           </span>
         </div>
       )}
-      <div className="totales-venta-item">
-        <label>Pagado:</label>
-        <span>{formatearMoneda(venta.pagado ?? 0, venta.divisa_id)}</span>
-      </div>
-      <div className="totales-venta-item">
-        <label>Pendiente:</label>
-        <span>{formatearMoneda(venta.pendiente ?? 0, venta.divisa_id)}</span>
-      </div>
     </div>
   );
 };

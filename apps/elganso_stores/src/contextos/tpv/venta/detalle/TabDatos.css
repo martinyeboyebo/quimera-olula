@@ -4,7 +4,7 @@
  * salida, divisa ni % comisión de cabecera (venta TPV en EUR, comisión de
  * línea): fila 1: fecha (6) + hora (6); fila 2: codalmacen (4) + codtienda
  * (4) + puntoVentaId (4); fila 3: agente_id (3) + nombre_agente (9,
- * no editable). Forma de pago vive en su propio tab (TabPagos).
+ * no editable).
  */
 .VentaTpv .TabDatos {
     quimera-date[nombre="fecha"] {

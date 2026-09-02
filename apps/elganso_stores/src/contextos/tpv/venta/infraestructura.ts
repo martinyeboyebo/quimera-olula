@@ -5,14 +5,18 @@ import Tpv_Urls from "#/tpv/comun/urls.ts";
 import {
   CambiosDatosCliente,
   DeleteLinea,
+  DeletePago,
   GetLineasVentaTpv,
+  GetPagosVentaTpv,
   GetVentaTpv,
   GetVentasTpv,
   LineaVentaTpv,
   NuevaVentaTpv,
+  PagoVentaTpv,
   PatchCantidadLinea,
   PatchClienteVentaTpv,
   PatchLinea,
+  PostPago,
   PostVentaTpv,
   VentaTpv,
 } from "./diseño.ts";
@@ -62,8 +66,6 @@ interface VentaTpvAPI {
   total_iva: number;
   por_descuento: number;
   neto_sin_dto: number;
-  forma_pago_id: string;
-  nombre_forma_pago: string;
   grupo_iva_negocio_id: string;
   pagado: number;
   pendiente: number;
@@ -259,4 +261,50 @@ export interface PrecheckPedido {
 export const getPrecheckPedido = async (puntoVentaId?: string): Promise<PrecheckPedido> => {
   const q = puntoVentaId ? `?punto_venta_id=${encodeURIComponent(puntoVentaId)}` : "";
   return await RestAPI.get<PrecheckPedido>(`/ventas/precheck_pedido${q}`);
+}
+
+interface PagoVentaTpvAPI {
+  id: string;
+  importe: number;
+  forma_pago: string;
+  fecha: string;
+  vale: string | null;
+  saldo_vale: number | null;
+  arqueo_id: string;
+  arqueo_abierto: boolean;
+  tipo_tarjeta_id: string | null;
+  tipo_tarjeta_nombre?: string | null;
+}
+
+const pagoVentaTpvDesdeAPI = (p: PagoVentaTpvAPI): PagoVentaTpv => ({
+  id: p.id,
+  importe: p.importe,
+  formaPago: p.forma_pago,
+  fecha: new Date(Date.parse(p.fecha)),
+  idArqueo: p.arqueo_id,
+  arqueoAbierto: p.arqueo_abierto,
+  idTipoTarjeta: p.tipo_tarjeta_id,
+  vale: p.vale,
+  saldoVale: p.saldo_vale,
+});
+
+export const getPagos: GetPagosVentaTpv = async (id) =>
+  await RestAPI.get<{ datos: PagoVentaTpvAPI[] }>(
+    `${baseUrl}/${id}/pagos`).then((respuesta) =>
+      respuesta.datos.map(pagoVentaTpvDesdeAPI)
+    );
+
+export const postPago: PostPago = async (id, pago) => {
+  const body = {
+    importe: pago.importe,
+    fecha: new Date().toISOString().slice(0, 10),
+    forma_pago: pago.formaPago,
+    tipo_tarjeta_id: pago.idTipoTarjeta,
+  };
+  return await RestAPI.post(`${baseUrl}/${id}/pago`, body, "Error al crear pago de venta")
+    .then((respuesta) => (respuesta as unknown as { id: string }).id);
+}
+
+export const deletePago: DeletePago = async (id, idPago): Promise<void> => {
+  await RestAPI.delete(`${baseUrl}/${id}/pago/${idPago}`, "Error al borrar pago de venta");
 }

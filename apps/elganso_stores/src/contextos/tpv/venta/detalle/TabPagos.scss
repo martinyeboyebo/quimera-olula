@@ -1,7 +1,0 @@
-// TabPagos.scss — posicionado de campos de la pestaña Pagos de la venta.
-// Grid de 12 columnas (quimera-formulario). Por ahora solo forma de pago.
-.VentaTpv .TabPagos {
-  quimera-select[nombre="forma_pago_id"] {
-    grid-column: 1 / span 12;
-  }
-}
