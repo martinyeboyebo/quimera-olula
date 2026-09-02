@@ -240,3 +240,23 @@ export const buscarTarjetasPuntos = async (
     `/ventas/tarjetapuntos?${q.toString()}`
   ).then((respuesta) => respuesta.datos);
 }
+
+export interface PuntoVentaOpcion {
+  codtpv_puntoventa: string;
+  descripcion: string;
+}
+
+export interface PrecheckPedido {
+  jornada_abierta: boolean;
+  puntos_venta: PuntoVentaOpcion[];
+  arqueo_id: string | null;
+}
+
+// Comprobaciones antes de dejar crear un pedido: jornada abierta, puntos de
+// venta disponibles y (si se manda punto_venta_id) arqueo abierto — el
+// backend lo abre solo si no existe. Sin punto_venta_id no se toca arqueo
+// (llamada inicial, solo para saber si hace falta elegir punto de venta).
+export const getPrecheckPedido = async (puntoVentaId?: string): Promise<PrecheckPedido> => {
+  const q = puntoVentaId ? `?punto_venta_id=${encodeURIComponent(puntoVentaId)}` : "";
+  return await RestAPI.get<PrecheckPedido>(`/ventas/precheck_pedido${q}`);
+}

@@ -33,6 +33,9 @@ export type QAutocompletarProps = Omit<
     opcion: Opcion | null,
     evento: React.FocusEvent<HTMLElement>
   ) => void;
+  /** Se reenvía tal cual a QInput/_forminput — es lo que dispara el
+   * guardado en blur cuando se usa "{...uiProps(...)}" (ver PaisSelector). */
+  evaluarCambio?: () => void;
 };
 
 const EnlaceFicha = ({
