@@ -5,8 +5,7 @@ import { RouterFactoryAuthOlula } from "./contextos/auth/router.ts";
 import { MaestroConDetalleVentaTpv } from "./contextos/tpv/venta/maestro/MaestroConDetalleVentaTpv.tsx";
 
 // "tpv/venta" no es el módulo genérico de packages/contextos: El Ganso
-// tiene su propio módulo completo de venta TPV (antes vivía en
-// "ventas/pedido", migrado por completo — ver ARQUITECTURA_GMIXTO.md).
+// tiene su propio módulo completo de venta TPV — ver ARQUITECTURA_GMIXTO.md.
 export class RouterFactoryVentasGanso extends RouterFactoryVentasOlula {
     static router = {
         ...RouterFactoryVentasOlula.router,
