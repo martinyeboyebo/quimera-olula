@@ -15,7 +15,7 @@ export const getMaquina: () => Maquina<EstadoMaestroVentaTpv, ContextoMaestroVen
 
             venta_deseleccionada: Ventas.desactivar,
 
-            venta_borrada: Ventas.quitar,
+            venta_borrada: [Ventas.quitar, Ventas.desactivar],
 
             venta_creada: Ventas.incluir,
 
@@ -32,7 +32,7 @@ export const getMaquina: () => Maquina<EstadoMaestroVentaTpv, ContextoMaestroVen
 
         CREANDO_VENTA: {
 
-            venta_creada: [Ventas.incluir, 'INICIAL'],
+            venta_creada: [Ventas.incluir, Ventas.activar, 'INICIAL'],
 
             creacion_venta_cancelada: "INICIAL",
         },

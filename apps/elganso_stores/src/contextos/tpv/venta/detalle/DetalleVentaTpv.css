@@ -1,3 +1,7 @@
+.VentaTpv {
+    background-color: var(--blanco);
+}
+
 .edicion-botones {
     min-height: 58px;
 }
