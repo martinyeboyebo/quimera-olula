@@ -36,6 +36,11 @@ export const Lineas = ({
       onClick: () => publicar("baja_linea_solicitada"),
       deshabilitado: !lineaActiva,
     },
+    {
+      icono: "bolsa",
+      texto: "Bolsas",
+      onClick: () => publicar("bolsas_solicitadas"),
+    },
   ];
 
   const handleCambioCantidad = (linea: LineaVentaTpv, cantidad: number) => {

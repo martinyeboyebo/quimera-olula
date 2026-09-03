@@ -25,10 +25,17 @@
 @media (max-width: 768px) {
     .PendienteVenta {
         flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .PendienteVenta .botones {
+        flex: 1 0 100%;
+        justify-content: center;
     }
 
     .PendienteVenta-item {
         flex: 1 1 auto;
+        justify-content: center;
         white-space: normal;
     }
 }

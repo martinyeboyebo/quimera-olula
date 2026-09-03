@@ -73,11 +73,6 @@ export const DetalleVentaTpv = ({
 
   const acciones = [
     {
-      texto: "Pago",
-      onClick: () => emitir("bolsas_solicitadas"),
-      deshabilitado: !esEditable,
-    },
-    {
       icono: "eliminar",
       texto: "Borrar",
       advertencia: true,
@@ -108,12 +103,12 @@ export const DetalleVentaTpv = ({
           <TabDatos venta={venta} />
         </Tab>
 
-        <Tab label="Pagos" deshabilitado={ctx.pagos.lista.length === 0}>
-          <Pagos pagos={ctx.pagos.lista} pagoActivo={ctx.pagos.activo} publicar={emitir} />
-        </Tab>
-
         <Tab label="Cliente">
           <TabCliente venta={venta} publicar={emitir} />
+        </Tab>
+
+        <Tab label="Pagos" deshabilitado={ctx.pagos.lista.length === 0}>
+          <Pagos pagos={ctx.pagos.lista} pagoActivo={ctx.pagos.activo} publicar={emitir} />
         </Tab>
       </Tabs>
 
