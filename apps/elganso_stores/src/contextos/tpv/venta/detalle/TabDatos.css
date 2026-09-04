@@ -36,6 +36,10 @@
     }
 }
 
+/* El componente base quimera-formulario pasa a un grid de 2 columnas en
+ * móvil y fuerza cada campo a ocupar la fila entera (1 / -1) — aquí se
+ * sobreescribe a span 1 (mitad de esas 2 columnas) para que queden de
+ * 2 en 2, pedido explícitamente para esta pantalla. */
 @media (max-width: 768px) {
     .VentaTpv .TabDatos quimera-formulario {
         quimera-date[nombre="fecha"],
@@ -43,9 +47,12 @@
         quimera-input[nombre="codalmacen"],
         quimera-input[nombre="codtienda"],
         quimera-input[nombre="puntoVentaId"],
-        quimera-input[nombre="agente_id"],
+        quimera-input[nombre="agente_id"] {
+            grid-column: span 1 !important;
+        }
+
         quimera-input[nombre="nombre_agente"] {
-            grid-column: 1 / -1 !important;
+            grid-column: span 2 !important;
         }
     }
 }

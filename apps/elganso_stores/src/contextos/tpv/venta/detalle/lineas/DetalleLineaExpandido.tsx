@@ -6,8 +6,26 @@ import "./DetalleLineaExpandido.scss";
 import { LineaVentaTpv } from "../../diseño.ts";
 
 // El barcode/talla/color no caben bien como columnas más en la tabla (ya
-// tiene muchos datos): se muestran en el desplegable de detalle, junto al
-// desglose e impuestos.
+// tiene muchos datos), ni los muestra TarjetaLineaVenta (compartido, no
+// los conoce): se reutiliza esta fila tanto en el desplegable de la tabla
+// como en la vista de tarjetas (ver TarjetaLinea.tsx).
+export const VarianteLinea = ({ linea }: { linea: LineaVentaTpv }) => (
+  <div className="detalle-linea-row">
+    <div className="detalle-linea-campo">
+      <span className="detalle-linea-etiqueta">Talla</span>
+      <span>{linea.talla || "—"}</span>
+    </div>
+    <div className="detalle-linea-campo">
+      <span className="detalle-linea-etiqueta">Color</span>
+      <span>{linea.color || "—"}</span>
+    </div>
+    <div className="detalle-linea-campo">
+      <span className="detalle-linea-etiqueta">Código de barras</span>
+      <span>{linea.barcode || "—"}</span>
+    </div>
+  </div>
+);
+
 export const DetalleLineaExpandido = ({
   linea,
   divisa,
@@ -20,20 +38,7 @@ export const DetalleLineaExpandido = ({
 
   return (
     <div className="DetalleLineaExpandido">
-      <div className="detalle-linea-row">
-        <div className="detalle-linea-campo">
-          <span className="detalle-linea-etiqueta">Talla</span>
-          <span>{linea.talla || "—"}</span>
-        </div>
-        <div className="detalle-linea-campo">
-          <span className="detalle-linea-etiqueta">Color</span>
-          <span>{linea.color || "—"}</span>
-        </div>
-        <div className="detalle-linea-campo">
-          <span className="detalle-linea-etiqueta">Código de barras</span>
-          <span>{linea.barcode || "—"}</span>
-        </div>
-      </div>
+      <VarianteLinea linea={linea} />
       <div className="detalle-linea-row">
         <div className="detalle-linea-campo">
           <span className="detalle-linea-etiqueta">Desglose</span>

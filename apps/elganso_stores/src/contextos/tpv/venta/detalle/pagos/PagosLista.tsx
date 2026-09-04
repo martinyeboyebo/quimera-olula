@@ -2,6 +2,7 @@ import { ColumnaEstadoTabla } from "#/comun/componentes/ColumnaEstadoTabla.tsx";
 import { MetaTabla } from "@olula/componentes/atomos/qtabla.tsx";
 import { QIcono } from "@olula/componentes/index.js";
 import { ListadoSemiControlado } from "@olula/componentes/maestro/ListadoSemiControlado.tsx";
+import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.ts";
 import { QuimeraAcciones } from "@olula/componentes/moleculas/qacciones.tsx";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { criteriaDefecto } from "@olula/lib/dominio.js";
@@ -18,6 +19,8 @@ export const PagosLista = ({
   acciones?: Parameters<typeof QuimeraAcciones>[0]["acciones"];
   publicar: EmitirEvento;
 }) => {
+  const esMovil = useEsMovil();
+
   const setSeleccionado = (pago: PagoVentaTpv) => {
     publicar("pago_seleccionado", pago);
   };
@@ -32,7 +35,7 @@ export const PagosLista = ({
       onSeleccion={setSeleccionado}
       criteriaInicial={criteriaDefecto}
       onCriteriaChanged={() => null}
-      modoInicial="tabla"
+      modoInicial={esMovil ? "tarjetas" : "tabla"}
       renderAcciones={() =>
         acciones && acciones.length > 0 ? (
           <div className="botones maestro-botones ">
