@@ -7,6 +7,7 @@ import { Detalle } from "@olula/componentes/detalle/Detalle.tsx";
 import { Tab, Tabs } from "@olula/componentes/detalle/tabs/Tabs.tsx";
 import { useMaquina } from "@olula/componentes/hook/useMaquina.js";
 import { QuimeraAcciones } from "@olula/componentes/index.js";
+import { useEsMovil } from "@olula/componentes/maestro/useEsMovil.ts";
 import { EmitirEvento } from "@olula/lib/diseño.ts";
 import { listaEntidadesInicial } from "@olula/lib/ListaEntidades.js";
 import { useModelo } from "@olula/lib/useModelo.js";
@@ -53,6 +54,7 @@ export const DetalleVentaTpv = ({
   );
 
   const venta = useModelo(metaVentaTpv, ctx.venta, sinAutoGuardar);
+  const esMovil = useEsMovil();
 
   useEffect(() => {
     emitir("venta_id_cambiada", id, true);
@@ -81,6 +83,49 @@ export const DetalleVentaTpv = ({
     },
   ];
 
+  // En móvil, las líneas van primero (es lo primero que se hace al abrir
+  // un pedido) y las pestañas al final; en escritorio se mantiene el
+  // orden clásico de pestañas arriba.
+  const bloqueLineas = (
+    <Lineas
+      venta={ctx.venta}
+      lineaActiva={lineaActiva}
+      publicar={emitir}
+      estadoVenta={estado}
+      ventaEditable={esEditable}
+    />
+  );
+
+  const bloqueTotales = (
+    <>
+      <TotalesVentaTpv modeloVenta={venta} publicar={emitir} />
+
+      {estado === "CAMBIANDO_DESCUENTO" && (
+        <CambiarDescuento publicar={emitir} venta={ctx.venta} />
+      )}
+
+      {ctx.venta.pendiente !== 0 && (
+        <PendienteVenta venta={ctx.venta} publicar={emitir} />
+      )}
+    </>
+  );
+
+  const bloqueTabs = (
+    <Tabs>
+      <Tab label="Datos">
+        <TabDatos venta={venta} />
+      </Tab>
+
+      <Tab label="Cliente">
+        <TabCliente venta={venta} publicar={emitir} />
+      </Tab>
+
+      <Tab label="Pagos" deshabilitado={ctx.pagos.lista.length === 0}>
+        <Pagos pagos={ctx.pagos.lista} pagoActivo={ctx.pagos.activo} publicar={emitir} />
+      </Tab>
+    </Tabs>
+  );
+
   return (
     <Detalle
       id={ctx.venta.id}
@@ -98,37 +143,19 @@ export const DetalleVentaTpv = ({
         <QuimeraAcciones acciones={acciones} vertical />
       </div>
 
-      <Tabs>
-        <Tab label="Datos">
-          <TabDatos venta={venta} />
-        </Tab>
-
-        <Tab label="Cliente">
-          <TabCliente venta={venta} publicar={emitir} />
-        </Tab>
-
-        <Tab label="Pagos" deshabilitado={ctx.pagos.lista.length === 0}>
-          <Pagos pagos={ctx.pagos.lista} pagoActivo={ctx.pagos.activo} publicar={emitir} />
-        </Tab>
-      </Tabs>
-
-      <TotalesVentaTpv modeloVenta={venta} publicar={emitir} />
-
-      {estado === "CAMBIANDO_DESCUENTO" && (
-        <CambiarDescuento publicar={emitir} venta={ctx.venta} />
+      {esMovil ? (
+        <>
+          {bloqueLineas}
+          {bloqueTotales}
+          {bloqueTabs}
+        </>
+      ) : (
+        <>
+          {bloqueTabs}
+          {bloqueTotales}
+          {bloqueLineas}
+        </>
       )}
-
-      {ctx.venta.pendiente !== 0 && (
-        <PendienteVenta venta={ctx.venta} publicar={emitir} />
-      )}
-
-      <Lineas
-        venta={ctx.venta}
-        lineaActiva={lineaActiva}
-        publicar={emitir}
-        estadoVenta={estado}
-        ventaEditable={esEditable}
-      />
 
       {estado === "BORRANDO_VENTA" && (
         <BorrarVentaTpv venta={ctx.venta} publicar={emitir} />

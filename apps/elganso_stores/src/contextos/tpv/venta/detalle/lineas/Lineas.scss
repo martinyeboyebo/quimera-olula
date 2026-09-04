@@ -6,3 +6,9 @@
   color: var(--color-texto-primario);
   border-bottom: var(--tamaño-borde-s) solid var(--color-borde-sutil);
 }
+
+@media (max-width: 768px) {
+  .Lineas-titulo {
+    display: none;
+  }
+}
